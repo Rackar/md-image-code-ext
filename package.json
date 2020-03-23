@@ -1,0 +1,111 @@
+{
+  "name": "dragpic2md",
+  "displayName": "DragPic2MD",
+  "description": "drag pic to markdown file to create img tag with relative path.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.43.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.helloWorld",
+        "title": "Hello World"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.qiniu.upload",
+        "key": "shift+p",
+        "mac": "shift+p",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.qiniu.select",
+        "title": "Paste Image To Qiniu",
+        "key": "shift+o",
+        "mac": "shift+o",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.qiniu.copy",
+        "key": "shift+v",
+        "mac": "shift+v",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "qiniu configuration",
+      "properties": {
+        "qiniu.enable": {
+          "type": "boolean",
+          "default": false,
+          "description": "七牛图片上传工具开关"
+        },
+        "qiniu.access_key": {
+          "type": "string",
+          "default": "",
+          "description": "一个有效的七牛 AccessKey 签名授权。"
+        },
+        "qiniu.secret_key": {
+          "type": "string",
+          "default": "",
+          "description": "一个有效的七牛 SecretKey 签名授权。"
+        },
+        "qiniu.bucket": {
+          "type": "string",
+          "default": "",
+          "description": "七牛图片上传空间。"
+        },
+        "qiniu.remotePath": {
+          "type": "string",
+          "default": "${fileName}",
+          "description": "七牛图片上传路径，参数化命名。"
+        },
+        "qiniu.domain": {
+          "type": "string",
+          "default": "",
+          "description": "七牛图床域名。"
+        },
+        "qiniu.localPath": {
+          "type": "string",
+          "default": "./img",
+          "description": "图片本地保存位置"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.43.0",
+    "eslint": "^6.8.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "glob": "^7.1.6",
+    "mocha": "^7.0.1",
+    "typescript": "^3.7.5",
+    "vscode-test": "^1.3.0"
+  },
+  "dependencies": {
+    "qiniu": "^7.3.0",
+    "request": "^2.88.2"
+  }
+}
