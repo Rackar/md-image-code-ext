@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 const path = require("path");
 const { window, commands, workspace } = vscode;
 const editor = window.activeTextEditor as vscode.TextEditor;
-const { fnupload } = require("./upload");
+const { uploadV730 } = require("./upload");
 // import foo = require("./upload");
 // import { fnupload } from "./upload.js";
 const format = require("./dateFormat");
@@ -21,7 +21,7 @@ const upload = (config: any, fsPath: string) => {
   const mdFilePath = editor.document.fileName;
   const mdFileName = path.basename(mdFilePath, path.extname(mdFilePath));
 
-  return fnupload(config, fsPath, mdFileName).then((obj: any) => {
+  return uploadV730(config, fsPath, mdFileName).then((obj: any) => {
     let { name, url } = obj;
     console.log("Upload success!");
 
@@ -65,42 +65,42 @@ export function activate(context: vscode.ExtensionContext) {
     return;
   }
 
-  // const inputUpload = commands.registerCommand("extension.qiniu.upload", () => {
-  //   if (!window.activeTextEditor) {
-  //     window.showErrorMessage("没有打开编辑窗口");
-  //     return;
-  //   }
+  const inputUpload = commands.registerCommand("extension.qiniu.upload", () => {
+    if (!window.activeTextEditor) {
+      window.showErrorMessage("没有打开编辑窗口");
+      return;
+    }
 
-  //   window
-  //     .showInputBox({
-  //       placeHolder: "输入一个图片地址"
-  //     })
-  //     .then(fsPath => upload(config, fsPath as string), error);
-  // });
+    window
+      .showInputBox({
+        placeHolder: "输入一个图片地址"
+      })
+      .then(fsPath => upload(config, fsPath as string), error);
+  });
 
-  // const selectUpload = commands.registerCommand(
-  //   "extension.qiniu.select",
-  //   () => {
-  //     window
-  //       .showOpenDialog({
-  //         filters: { Images: ["png", "jpg", "gif", "bmp"] }
-  //       })
-  //       .then(result => {
-  //         if (result) {
-  //           const { fsPath } = result[0];
-  //           return upload(config, fsPath);
-  //         }
-  //       }, error);
-  //   }
-  // );
+  const selectUpload = commands.registerCommand(
+    "extension.qiniu.select",
+    () => {
+      window
+        .showOpenDialog({
+          filters: { Images: ["png", "jpg", "gif", "bmp"] }
+        })
+        .then(result => {
+          if (result) {
+            const { fsPath } = result[0];
+            return upload(config, fsPath);
+          }
+        }, error);
+    }
+  );
 
-  // const copyclipboard = commands.registerCommand("extension.qiniu.copy", () => {
-  //   pasteImageToQiniu();
-  // });
+  const copyclipboard = commands.registerCommand("extension.qiniu.copy", () => {
+    pasteImageToQiniu();
+  });
 
-  // context.subscriptions.push(inputUpload);
-  // context.subscriptions.push(selectUpload);
-  // context.subscriptions.push(copyclipboard);
+  context.subscriptions.push(inputUpload);
+  context.subscriptions.push(selectUpload);
+  context.subscriptions.push(copyclipboard);
 
   context.subscriptions.push(disposable);
 }

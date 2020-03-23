@@ -4,11 +4,11 @@ const url = require("url");
 const request = require("request");
 
 const PutPolicy = qiniu.rs.PutPolicy;
-const PutExtra = qiniu.io.PutExtra;
+// const PutExtra = qiniu.io.PutExtra;
 
 // 上传策略函数
-const uptoken = (bucket: string, key: string) =>
-  new PutPolicy(`${bucket}:${key}`).token();
+// const uptoken = (bucket: string, key: string) =>
+//   new PutPolicy(`${bucket}:${key}`).token();
 
 // 默认参数
 const formatParam = (file: string, mdFileName: string) => {
@@ -42,82 +42,197 @@ const formatString = (tplString: string, data: any) => {
   );
 };
 
-module.exports.fnupload = (options: any, file: string, mdFile: string) => {
+// module.exports.fnupload = (options: any, file: string, mdFile: string) => {
+//   let { access_key, secret_key, bucket, domain, remotePath } = options;
+
+//   qiniu.conf.ACCESS_KEY = access_key;
+//   qiniu.conf.SECRET_KEY = secret_key;
+
+//   var mac = new qiniu.auth.digest.Mac(access_key, secret_key);
+//   let _options = {
+//     scope: bucket
+//   };
+//   var _putPolicy = new qiniu.rs.PutPolicy(_options);
+//   var _uploadToken = _putPolicy.uploadToken(mac);
+
+//   let localFile = file;
+//   if (/^".+"$/.test(localFile)) {
+//     localFile = file.substring(1, file.length - 1);
+//   }
+
+//   // 预设参数值
+//   const param = formatParam(localFile, mdFile);
+//   //上传到七牛后保存的文件名
+//   const saveFile = formatString(remotePath + "${ext}", param);
+//   //生成上传 Token
+//   const token = uptoken(bucket, saveFile);
+
+//   if (localFile.indexOf("http") === 0 || localFile.indexOf("https") === 0) {
+//     return new Promise((resolve, reject) => {
+//       const extra = new PutExtra();
+//       request(
+//         {
+//           headers: {
+//             Referer: localFile
+//           },
+//           uri: localFile,
+//           encoding: null,
+//           method: "GET"
+//         },
+//         function(err: any, res: any, body: any) {
+//           if (!err) {
+//             qiniu.io.put(
+//               token,
+//               saveFile,
+//               body,
+//               extra,
+//               (err: any, data: any) => {
+//                 let { key } = data;
+//                 if (!err) {
+//                   resolve({
+//                     name: path.win32.basename(key, param.ext),
+//                     url: url.resolve(domain, saveFile)
+//                   });
+//                 } else {
+//                   reject(err);
+//                 }
+//               }
+//             );
+//           }
+//         }
+//       );
+//     });
+//   } else {
+//     return new Promise((resolve, reject) => {
+//       const extra = new PutExtra();
+
+//       qiniu.io.putFile(
+//         token,
+//         saveFile,
+//         localFile,
+//         extra,
+//         (err: any, data: any) => {
+//           let { key } = data;
+//           if (!err) {
+//             // 上传成功， 处理返回值
+//             resolve({
+//               name: path.win32.basename(key, param.ext),
+//               url: url.resolve(domain, saveFile)
+//             });
+//           } else {
+//             // 上传失败， 处理返回代码
+//             reject(err);
+//           }
+//         }
+//       );
+//     });
+//   }
+// };
+
+module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
   let { access_key, secret_key, bucket, domain, remotePath } = options;
 
   qiniu.conf.ACCESS_KEY = access_key;
   qiniu.conf.SECRET_KEY = secret_key;
 
+  let mac = new qiniu.auth.digest.Mac(access_key, secret_key);
+  let _options = {
+    scope: bucket
+  };
+  let _putPolicy = new qiniu.rs.PutPolicy(_options);
+  let _uploadToken = _putPolicy.uploadToken(mac);
+
+  let config = new qiniu.conf.Config();
+  // 空间对应的机房
+  config.zone = qiniu.zone.Zone_z1;
+  let formUploader = new qiniu.form_up.FormUploader(config);
+
   let localFile = file;
+  const extra = new qiniu.form_up.PutExtra();
+
   if (/^".+"$/.test(localFile)) {
     localFile = file.substring(1, file.length - 1);
   }
 
   // 预设参数值
   const param = formatParam(localFile, mdFile);
+  // localFile在path下为远程图片路径。
   //上传到七牛后保存的文件名
   const saveFile = formatString(remotePath + "${ext}", param);
+
+  let key = param.fileName; //仅文件名
   //生成上传 Token
-  const token = uptoken(bucket, saveFile);
+  //   const token = uptoken(bucket, saveFile);
 
   if (localFile.indexOf("http") === 0 || localFile.indexOf("https") === 0) {
+    //远程上传
     return new Promise((resolve, reject) => {
-      const extra = new PutExtra();
-      request(
-        {
-          headers: {
-            Referer: localFile
-          },
-          uri: localFile,
-          encoding: null,
-          method: "GET"
-        },
-        function(err: any, res: any, body: any) {
-          if (!err) {
-            qiniu.io.put(
-              token,
-              saveFile,
-              body,
-              extra,
-              (err: any, data: any) => {
-                let { key } = data;
-                if (!err) {
-                  resolve({
-                    name: path.win32.basename(key, param.ext),
-                    url: url.resolve(domain, saveFile)
-                  });
-                } else {
-                  reject(err);
-                }
-              }
-            );
+      // const  = new PutExtra();
+
+      let bucketManager = new qiniu.rs.BucketManager(mac, config);
+      bucketManager.fetch(localFile, bucket, saveFile, function(
+        err: any,
+        respBody: any,
+        respInfo: any
+      ) {
+        if (err) {
+          console.log(err);
+          //throw err;
+        } else {
+          if (respInfo.statusCode === 200) {
+            console.log(respBody.key);
+            console.log(respBody.hash);
+            console.log(respBody.fsize);
+            console.log(respBody.mimeType);
+            // let { key } = data;
+            // if (!err) {
+            //   resolve({
+            //     name: path.win32.basename(key, param.ext),
+            //     url: url.resolve(domain, saveFile)
+            //   });
+            let resUrl = url.resolve(domain, saveFile);
+
+            if (!err) {
+              resolve({
+                name: path.win32.basename(respBody.key, param.ext),
+                url: resUrl
+              });
+            } else {
+              console.log(respInfo.statusCode);
+              console.log(respBody);
+            }
           }
         }
-      );
+      });
     });
   } else {
+    //本地上传
     return new Promise((resolve, reject) => {
-      const extra = new PutExtra();
-
-      qiniu.io.putFile(
-        token,
-        saveFile,
-        localFile,
-        extra,
-        (err: any, data: any) => {
-          let { key } = data;
-          if (!err) {
-            // 上传成功， 处理返回值
-            resolve({
-              name: path.win32.basename(key, param.ext),
-              url: url.resolve(domain, saveFile)
-            });
-          } else {
-            // 上传失败， 处理返回代码
-            reject(err);
-          }
+      // 文件上传
+      formUploader.putFile(_uploadToken, key, localFile, extra, function(
+        respErr: any,
+        respBody: any,
+        respInfo: any
+      ) {
+        if (respErr) {
+          throw respErr;
         }
-      );
+        if (respInfo.statusCode === 200) {
+          console.log(respBody);
+          // resolve({
+          //   name: path.win32.basename(key, param.ext),
+          //   url: url.resolve(domain, saveFile)
+          // });
+          resolve({
+            name: path.win32.basename(key, param.ext),
+            url: url.resolve(domain, saveFile)
+          });
+        } else {
+          console.log(respInfo.statusCode);
+          console.log(respBody);
+          reject(respBody);
+        }
+      });
     });
   }
 };
