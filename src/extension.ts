@@ -8,7 +8,6 @@ const editor = window.activeTextEditor as vscode.TextEditor;
 const { uploadV730 } = require("./upload");
 // import foo = require("./upload");
 // import { fnupload } from "./upload.js";
-const format = require("./dateFormat");
 // const moment = require("moment");
 const fs = require("fs");
 const { spawn } = require("child_process");
@@ -25,7 +24,9 @@ const upload = (config: any, fsPath: string) => {
     let { name, url } = obj;
     console.log("Upload success!");
 
-    const img = `![${name}](${url})`;
+    const img = `
+![${name}](${url})
+`;
 
     editor.edit(textEditorEdit => {
       textEditorEdit.insert(editor.selection.active, img);
@@ -169,7 +170,8 @@ function getImagePath(filePath: string, selectText: string, localPath: string) {
   // 图片名称
   let imageFileName = "";
   if (!selectText) {
-    imageFileName = format("yyyy-MM-dd-hh:mm:ss", new Date()) + ".png";
+    let now = Date.now();
+    imageFileName = now + ".png";
     // imageFileName = moment().format("Y-MM-DD-HH-mm-ss") + ".png";
   } else {
     imageFileName = selectText + ".png";
@@ -213,7 +215,7 @@ function saveClipboardImageToFileAndGetPath(imagePath: string, cb: Function) {
   let platform = process.platform;
   if (platform === "win32") {
     // Windows
-    const scriptPath = path.join(__dirname, "./lib/pc.ps1");
+    const scriptPath = path.join(__dirname, "../lib/pc.ps1");
     const powershell = spawn("powershell", [
       "-noprofile",
       "-noninteractive",

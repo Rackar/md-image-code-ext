@@ -219,10 +219,6 @@ module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
         }
         if (respInfo.statusCode === 200) {
           console.log(respBody);
-          // resolve({
-          //   name: path.win32.basename(key, param.ext),
-          //   url: url.resolve(domain, saveFile)
-          // });
           resolve({
             name: path.win32.basename(key, param.ext),
             url: url.resolve(domain, saveFile)
