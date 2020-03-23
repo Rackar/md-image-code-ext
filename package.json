@@ -119,5 +119,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Rackar/md-image-code-ext"
-  }
+  },
+  "publisher": "rackar"
 }
