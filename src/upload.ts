@@ -165,7 +165,7 @@ module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
   //   const token = uptoken(bucket, saveFile);
 
   if (localFile.indexOf("http") === 0 || localFile.indexOf("https") === 0) {
-    //远程上传
+    //远程路径获取并上传
     return new Promise((resolve, reject) => {
       // const  = new PutExtra();
 
@@ -209,7 +209,7 @@ module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
     //本地上传
     return new Promise((resolve, reject) => {
       // 文件上传
-      formUploader.putFile(_uploadToken, key, localFile, extra, function(
+      formUploader.putFile(_uploadToken, saveFile, localFile, extra, function(
         respErr: any,
         respBody: any,
         respInfo: any
