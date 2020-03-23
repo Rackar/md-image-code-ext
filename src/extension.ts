@@ -6,9 +6,7 @@ const path = require("path");
 const { window, commands, workspace } = vscode;
 const editor = window.activeTextEditor as vscode.TextEditor;
 const { uploadV730 } = require("./upload");
-// import foo = require("./upload");
-// import { fnupload } from "./upload.js";
-// const moment = require("moment");
+
 const fs = require("fs");
 const { spawn } = require("child_process");
 
@@ -43,22 +41,24 @@ const error = (err: any) => {
 export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "dd" is now active!');
+  console.log(
+    'Congratulations, your extension "markdown-image" is now active!'
+  );
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "extension.helloWorld",
-    () => {
-      // The code you place here will be executed every time your command is executed
+  // let disposable = vscode.commands.registerCommand(
+  //   "extension.helloWorld",
+  //   () => {
+  //     // The code you place here will be executed every time your command is executed
 
-      // Display a message box to the user
-      vscode.window.showInformationMessage(
-        "Hello vs code!" + new Date().toLocaleString()
-      );
-    }
-  );
+  //     // Display a message box to the user
+  //     vscode.window.showInformationMessage(
+  //       "Hello vs code!" + new Date().toLocaleString()
+  //     );
+  //   }
+  // );
 
   const config = workspace.getConfiguration("qiniu");
 
@@ -103,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(selectUpload);
   context.subscriptions.push(copyclipboard);
 
-  context.subscriptions.push(disposable);
+  // context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
