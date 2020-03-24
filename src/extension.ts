@@ -18,18 +18,20 @@ const upload = (config: any, fsPath: string) => {
   const mdFilePath = editor.document.fileName;
   const mdFileName = path.basename(mdFilePath, path.extname(mdFilePath));
 
-  return uploadV730(config, fsPath, mdFileName).then((obj: any) => {
-    let { name, url } = obj;
-    console.log("Upload success!");
+  return uploadV730(config, fsPath, mdFileName)
+    .then((obj: any) => {
+      let { name, url } = obj;
+      console.log("Upload success!");
 
-    const img = `
+      const img = `
 ![${name}](${url})
 `;
 
-    editor.edit(textEditorEdit => {
-      textEditorEdit.insert(editor.selection.active, img);
-    });
-  });
+      editor.edit(textEditorEdit => {
+        textEditorEdit.insert(editor.selection.active, img);
+      });
+    })
+    .catch((err: any) => error(err));
 };
 
 const error = (err: any) => {

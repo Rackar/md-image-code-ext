@@ -99,6 +99,7 @@ module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
             } else {
               console.log(respInfo.statusCode);
               console.log(respBody);
+              reject(respBody);
             }
           }
         }
