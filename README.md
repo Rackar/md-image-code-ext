@@ -68,13 +68,13 @@ ext install markdown-image
 
 [https://github.com/gityangge/vscode-qiniu-upload-image-plus](https://github.com/gityangge/vscode-qiniu-upload-image-plus)
 
-## Release Notes
+## publish ext
 
-Users appreciate release notes as you update your extension.
+本地打包
+`vsce package`
 
-### 1.0.0
-
----
+发布到市场
+`vsce publish minor` 或 `vsce publish patch`
 
 ## Working with Markdown
 
