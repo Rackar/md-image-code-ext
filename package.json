@@ -2,7 +2,7 @@
   "name": "markdown-image",
   "displayName": "Markdown image upload and insert",
   "description": "Import image tag to MD file by 3 ways.Select local file path, input Remote Url, paste form clipbroad. It will be uploaded to Qiniu Cloud, and insert img tag and url to your md file",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/Rackar/md-image-code-ext"
