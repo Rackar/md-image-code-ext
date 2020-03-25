@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0
 - [] 提供选择复制图片到本目录还是云端目录的设置开关。
 - [] 申请七牛云免费图床的教程
 
+## [1.3.1] - 2020-03-25
+
+### Changed
+
+- 修改默认快捷键
+
 ## [1.3.0] - 2020-03-25
 
 ### Added

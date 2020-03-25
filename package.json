@@ -48,21 +48,21 @@
     "keybindings": [
       {
         "command": "extension.qiniu.upload",
-        "key": "shift+p",
-        "mac": "shift+p",
+        "key": "ctrl+alt+0",
+        "mac": "cmd+alt+0",
         "when": "editorTextFocus && editorLangId == 'markdown'"
       },
       {
         "command": "extension.qiniu.select",
         "title": "Paste Image To Qiniu",
-        "key": "shift+o",
-        "mac": "shift+o",
+        "key": "ctrl+alt+9",
+        "mac": "cmd+alt+9",
         "when": "editorTextFocus && editorLangId == 'markdown'"
       },
       {
         "command": "extension.qiniu.copy",
-        "key": "shift+v",
-        "mac": "shift+v",
+        "key": "ctrl+alt+8",
+        "mac": "cmd+alt+8",
         "when": "editorTextFocus && editorLangId == 'markdown'"
       }
     ],
@@ -97,7 +97,7 @@
         },
         "qiniu.domain": {
           "type": "string",
-          "default": "",
+          "default": "http://",
           "description": "七牛图床域名。需要以http://开头"
         },
         "qiniu.localPath": {

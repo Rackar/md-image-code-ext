@@ -22,9 +22,9 @@ This is the README for VS Code extension "markdown-image". Import image tag to M
 
 ![](images/tu3.png)
 
-1. **img 远程** 粘贴远程图片 URL 路径上传。快捷键：`SHIFT + P`
-2. **img 本地** 直接选择本机图片上传。快捷键：`SHIFT + O`
-3. **img 截图** 剪贴板内的截图上传。快捷键： `SHIFT + V`
+1. **img 截图** 剪贴板内的截图上传。快捷键： `Ctrl + Alt +8`
+2. **img 本地** 直接选择本机图片上传。快捷键：`Ctrl + Alt +9`
+3. **img 远程** 粘贴远程图片 URL 路径上传。快捷键：`Ctrl + Alt +0`
 
 > 支持 qq，微信等工具的截图功能，会自动在本目录保存图片并上传云端。
 
