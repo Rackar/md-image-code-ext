@@ -37,6 +37,43 @@ const upload = (config: any, fsPath: string) => {
 const error = (err: any) => {
   window.showErrorMessage(err);
 };
+let sBarUpload: vscode.StatusBarItem;
+let sBarSelect: vscode.StatusBarItem;
+let sBarClip: vscode.StatusBarItem;
+
+const showSBars = () => {
+  sBarUpload.show();
+  sBarSelect.show();
+  sBarClip.show();
+};
+
+const hideSBars = () => {
+  sBarUpload.hide();
+  sBarSelect.hide();
+  sBarClip.hide();
+};
+
+const initStatusBar = (subscriptions: any, commandObj: any) => {
+  let { cmdUpload, cmdSelect, cmdCopy } = commandObj;
+
+  sBarUpload = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 19);
+  sBarSelect = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 20);
+
+  sBarClip = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 21);
+  sBarUpload.text = "img远程";
+  sBarSelect.text = "img本地";
+  sBarClip.text = "img截图";
+  sBarUpload.tooltip = "将远程URL的图片下载到七牛云并插入本文";
+  sBarSelect.tooltip = "将本机的图片上传到七牛云并插入本文";
+  sBarClip.tooltip = "将剪贴板中的截图保存到本目录下并上传七牛云后，插入本文";
+  sBarUpload.command = cmdUpload;
+  sBarSelect.command = cmdSelect;
+  sBarClip.command = cmdCopy;
+  subscriptions.push(sBarUpload);
+  subscriptions.push(sBarSelect);
+  subscriptions.push(sBarClip);
+  showSBars();
+};
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -68,7 +105,13 @@ export function activate(context: vscode.ExtensionContext) {
     return;
   }
 
-  const inputUpload = commands.registerCommand("extension.qiniu.upload", () => {
+  let cmdUpload = "extension.qiniu.upload";
+  let cmdSelect = "extension.qiniu.select";
+  let cmdCopy = "extension.qiniu.copy";
+
+  initStatusBar(context.subscriptions, { cmdUpload, cmdSelect, cmdCopy });
+
+  const inputUpload = commands.registerCommand(cmdUpload, () => {
     if (!window.activeTextEditor) {
       window.showErrorMessage("没有打开编辑窗口");
       return;
@@ -81,23 +124,20 @@ export function activate(context: vscode.ExtensionContext) {
       .then(fsPath => upload(config, fsPath as string), error);
   });
 
-  const selectUpload = commands.registerCommand(
-    "extension.qiniu.select",
-    () => {
-      window
-        .showOpenDialog({
-          filters: { Images: ["png", "jpg", "gif", "bmp"] }
-        })
-        .then(result => {
-          if (result) {
-            const { fsPath } = result[0];
-            return upload(config, fsPath);
-          }
-        }, error);
-    }
-  );
+  const selectUpload = commands.registerCommand(cmdSelect, () => {
+    window
+      .showOpenDialog({
+        filters: { Images: ["png", "jpg", "gif", "bmp"] }
+      })
+      .then(result => {
+        if (result) {
+          const { fsPath } = result[0];
+          return upload(config, fsPath);
+        }
+      }, error);
+  });
 
-  const copyclipboard = commands.registerCommand("extension.qiniu.copy", () => {
+  const copyclipboard = commands.registerCommand(cmdCopy, () => {
     pasteImageToQiniu();
   });
 
@@ -106,10 +146,22 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(copyclipboard);
 
   // context.subscriptions.push(disposable);
+  window.onDidChangeActiveTextEditor(() => {
+    let fileLanguage = (window.activeTextEditor as vscode.TextEditor).document
+      .languageId;
+    if (fileLanguage === "markdown") {
+      showSBars();
+    } else {
+      hideSBars();
+    }
+    console.log(fileLanguage);
+  });
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  console.log('"markdown-image" is shuting down.');
+}
 
 function pasteImageToQiniu() {
   let fileUri = editor.document.uri;

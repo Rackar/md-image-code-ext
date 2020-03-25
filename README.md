@@ -10,12 +10,23 @@ This is the README for VS Code extension "markdown-image". Import image tag to M
 
 > Tips: 只有在编辑 Markdown 时插件才可使用。
 
+> Tips: 七牛云图床默认是 http 协议，在预览界面默认不加载 http 请求的图片。要按照下图允许请求才能正常预览。
+
+![](images/tu1.png)
+
+![](images/tu2.png)
+
 ## Usage
 
-1. 粘贴图片路径上传：`SHIFT + P`
-2. 直接选择图片上传：`SHIFT + O`
-3. 截屏图片上传： `SHIFT + V`
-   > 支持 qq，微信等工具的截图
+打开 `.md` 文件后，左下角状态栏有 3 个按钮：
+
+![](images/tu3.png)
+
+1. **img 远程** 粘贴远程图片 URL 路径上传。快捷键：`SHIFT + P`
+2. **img 本地** 直接选择本机图片上传。快捷键：`SHIFT + O`
+3. **img 截图** 剪贴板内的截图上传。快捷键： `SHIFT + V`
+
+> 支持 qq，微信等工具的截图功能，会自动在本目录保存图片并上传云端。
 
 > 按键需在英文编辑状态下有效，功能 2 需要升级 vscode 到 v1.17+。
 
