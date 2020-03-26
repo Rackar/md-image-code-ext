@@ -72,38 +72,38 @@
       "properties": {
         "qiniu.enable": {
           "type": "boolean",
-          "default": false,
-          "description": "七牛图片上传工具开关"
+          "default": true,
+          "description": " 上传插件开关，默认打开"
         },
         "qiniu.access_key": {
           "type": "string",
           "default": "",
-          "description": "一个有效的七牛 AccessKey 签名授权。"
+          "description": "你的七牛AK: AccessKey"
         },
         "qiniu.secret_key": {
           "type": "string",
           "default": "",
-          "description": "一个有效的七牛 SecretKey 签名授权。"
+          "description": "你的七牛SK: SecretKey"
         },
         "qiniu.bucket": {
           "type": "string",
           "default": "",
-          "description": "七牛图片上传空间。"
+          "description": "你的七牛存储名称"
         },
         "qiniu.remotePath": {
           "type": "string",
           "default": "${fileName}",
-          "description": "七牛图片上传路径，参数化命名。"
+          "description": "远程文件命名方式。参数化命名见说明。"
         },
         "qiniu.domain": {
           "type": "string",
           "default": "http://",
-          "description": "七牛图床域名。需要以http://开头"
+          "description": "你的七牛外链地址。注意需要以http://作为开头"
         },
         "qiniu.localPath": {
           "type": "string",
           "default": "./img",
-          "description": "图片本地保存位置"
+          "description": "截图方式图片本地保存位置"
         }
       }
     }

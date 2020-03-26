@@ -187,9 +187,7 @@ function pasteImageToQiniu() {
   }
 
   if (fileUri.scheme === "untitled") {
-    window.showInformationMessage(
-      "Before paste image, you need to save current edit file first."
-    );
+    window.showInformationMessage("粘贴图片前需要先保存本文件。");
     return;
   }
 
@@ -197,7 +195,7 @@ function pasteImageToQiniu() {
   let selectText = editor.document.getText(selection);
 
   if (selectText && !/^[\w\-.]+$/.test(selectText)) {
-    window.showInformationMessage("Your selection is not a valid file name!");
+    window.showInformationMessage("文件名有误");
     return;
   }
 
@@ -205,9 +203,7 @@ function pasteImageToQiniu() {
 
   let localPath = config["localPath"];
   if (localPath && localPath.length !== localPath.trim().length) {
-    window.showErrorMessage(
-      'The specified path is invalid. "' + localPath + '"'
-    );
+    window.showErrorMessage('设置中的本地路径有误"' + localPath + '"');
     return;
   }
   let filePath = fileUri.fsPath;
@@ -221,18 +217,19 @@ function pasteImageToQiniu() {
         if (imagePath === "no image") {
           return;
         }
-        window.showInformationMessage("imagePath:" + imagePath);
+        // window.showInformationMessage("imagePath:" + imagePath);
         upload(config, imagePath)
           .then(() => {
-            window.showInformationMessage("Upload success.");
+            // window.showInformationMessage("Upload success.");
+            console.log("上传成功");
           })
           .catch(() => {
-            window.showErrorMessage("Upload error.");
+            window.showErrorMessage("上传失败，请检查参数设置");
           });
       });
     })
     .catch(err => {
-      window.showErrorMessage("Failed make folder.");
+      window.showErrorMessage("文件夹创建失败");
       return;
     });
 }
