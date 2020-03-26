@@ -4,16 +4,20 @@ import * as vscode from "vscode";
 
 const path = require("path");
 const { window, commands, workspace } = vscode;
-const editor = window.activeTextEditor as vscode.TextEditor;
 const { uploadV730 } = require("./upload");
 
 const fs = require("fs");
 const { spawn } = require("child_process");
+let editor: vscode.TextEditor;
 
 const upload = (config: any, fsPath: string) => {
   if (!fsPath) {
     return;
   }
+  // if (!window.activeTextEditor) {
+  //   return;
+  // }
+  // editor = window.activeTextEditor as vscode.TextEditor;
 
   const mdFilePath = editor.document.fileName;
   const mdFileName = path.basename(mdFilePath, path.extname(mdFilePath));
@@ -116,6 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
       window.showErrorMessage("没有打开编辑窗口");
       return;
     }
+    editor = window.activeTextEditor as vscode.TextEditor;
 
     window
       .showInputBox({
@@ -125,6 +130,11 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const selectUpload = commands.registerCommand(cmdSelect, () => {
+    if (!window.activeTextEditor) {
+      window.showErrorMessage("没有打开编辑窗口");
+      return;
+    }
+    editor = window.activeTextEditor as vscode.TextEditor;
     window
       .showOpenDialog({
         filters: { Images: ["png", "jpg", "gif", "bmp"] }
@@ -138,6 +148,11 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const copyclipboard = commands.registerCommand(cmdCopy, () => {
+    if (!window.activeTextEditor) {
+      window.showErrorMessage("没有打开编辑窗口");
+      return;
+    }
+    editor = window.activeTextEditor as vscode.TextEditor;
     pasteImageToQiniu();
   });
 
@@ -147,14 +162,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   // context.subscriptions.push(disposable);
   window.onDidChangeActiveTextEditor(() => {
-    let fileLanguage = (window.activeTextEditor as vscode.TextEditor).document
-      .languageId;
-    if (fileLanguage === "markdown") {
-      showSBars();
-    } else {
-      hideSBars();
+    if (window.activeTextEditor) {
+      let fileLanguage = (window.activeTextEditor as vscode.TextEditor).document
+        .languageId;
+      if (fileLanguage === "markdown") {
+        showSBars();
+      } else {
+        hideSBars();
+      }
+      console.log(fileLanguage);
     }
-    console.log(fileLanguage);
   });
 }
 

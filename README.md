@@ -12,8 +12,6 @@ This is the README for VS Code extension "markdown-image". Import image tag to M
 
 > Tips: 七牛云图床默认是 http 协议，在预览界面默认不加载 http 请求的图片。要按照下图允许请求才能正常预览。
 
-![](images/tu1.png)
-
 ![](images/tu2.png)
 
 ## Usage
