@@ -1,6 +1,15 @@
 const qiniu = require("qiniu");
 const path = require("path");
 const url = require("url");
+import { copyFileSync } from "fs";
+import * as vscode from "vscode";
+const { window, commands, workspace } = vscode;
+const {
+  downloadImage,
+  getImagePath,
+  createImageDirWithImagePath,
+  saveClipboardImageToFileAndGetPath
+} = require("./image");
 
 const PutPolicy = qiniu.rs.PutPolicy;
 
@@ -36,8 +45,91 @@ const formatString = (tplString: string, data: any) => {
   );
 };
 
-module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
-  let { access_key, secret_key, bucket, domain, remotePath } = options;
+function saveLocalFile(file: string) {
+  const config = workspace.getConfiguration("qiniu");
+
+  if (!config.enable) {
+    return;
+  }
+  let editor = window.activeTextEditor as vscode.TextEditor;
+  let fileUri = editor.document.uri;
+  if (!fileUri) {
+    return;
+  }
+
+  if (fileUri.scheme === "untitled") {
+    window.showInformationMessage("粘贴图片前需要先保存本文件。");
+    return;
+  }
+  let selection = editor.selection;
+  let selectText = editor.document.getText(selection);
+
+  if (selectText && !/^[\w\-.]+$/.test(selectText)) {
+    window.showInformationMessage("文件名有误");
+    return;
+  }
+  let localPath = config["localPath"];
+  if (localPath && localPath.length !== localPath.trim().length) {
+    window.showErrorMessage('设置中的本地路径有误"' + localPath + '"');
+    return;
+  }
+  let filePath = fileUri.fsPath;
+  let imagePath: string = getImagePath(filePath, selectText, localPath);
+  //本地复制
+
+  return new Promise((resolve, reject) => {
+    createImageDirWithImagePath(imagePath)
+      .then(async (imagePath: string) => {
+        if (file.indexOf("http") === 0 || file.indexOf("https") === 0) {
+          await downloadImage(file, imagePath);
+        } else {
+          copyFileSync(file, imagePath);
+        }
+
+        resolve({
+          name: path.win32.basename(imagePath),
+          url: path.join(localPath, path.win32.basename(imagePath))
+        });
+      })
+      .catch((err: any) => {
+        console.error(err);
+        reject();
+      });
+  });
+}
+
+module.exports.uploadV730 = async (
+  options: any,
+  file: string,
+  mdFile: string
+) => {
+  let {
+    access_key,
+    secret_key,
+    bucket,
+    domain,
+    remotePath,
+    uploadEnable
+  } = options;
+
+  let localFile = file;
+  const extra = new qiniu.form_up.PutExtra();
+
+  if (/^".+"$/.test(localFile)) {
+    localFile = file.substring(1, file.length - 1);
+  }
+  // 预设参数值
+  const param = formatParam(localFile, mdFile);
+  // localFile在path下为远程图片路径。
+
+  //上传到七牛后保存的文件名
+  const saveFile = formatString(remotePath + "${ext}", param);
+
+  let key = param.fileName; //仅文件名
+
+  if (!uploadEnable) {
+    return saveLocalFile(localFile);
+  }
 
   qiniu.conf.ACCESS_KEY = access_key;
   qiniu.conf.SECRET_KEY = secret_key;
@@ -53,22 +145,6 @@ module.exports.uploadV730 = (options: any, file: string, mdFile: string) => {
   // 空间对应的机房
   config.zone = qiniu.zone.Zone_z1;
   let formUploader = new qiniu.form_up.FormUploader(config);
-
-  let localFile = file;
-  const extra = new qiniu.form_up.PutExtra();
-
-  if (/^".+"$/.test(localFile)) {
-    localFile = file.substring(1, file.length - 1);
-  }
-
-  // 预设参数值
-  const param = formatParam(localFile, mdFile);
-  // localFile在path下为远程图片路径。
-
-  //上传到七牛后保存的文件名
-  const saveFile = formatString(remotePath + "${ext}", param);
-
-  let key = param.fileName; //仅文件名
 
   if (localFile.indexOf("http") === 0 || localFile.indexOf("https") === 0) {
     //远程路径获取并上传

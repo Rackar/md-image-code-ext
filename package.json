@@ -1,7 +1,7 @@
 {
   "name": "markdown-image",
   "displayName": "Markdown image upload and insert",
-  "description": "给Markdown文件快速插入图片链接。3种方式选择图片并上传七牛云图层。Import image tag to MD file by 3 ways.Select local file path, input Remote Url, paste form clipbroad. It will be uploaded to Qiniu Cloud, and insert img tag and url to your md file",
+  "description": "给Markdown文件快速插入图片链接。3种方式选择图片并上传七牛云图床。Import image tag to MD file by 3 ways.Select local file path, input Remote Url, paste form clipbroad. It will be uploaded to Qiniu Cloud, and insert img tag and url to your md file",
   "version": "1.3.4",
   "repository": {
     "type": "git",
@@ -43,6 +43,10 @@
       {
         "command": "extension.qiniu.copy",
         "title": "Image clip"
+      },
+      {
+        "command": "extension.qiniu.switch",
+        "title": "Enable upload image"
       }
     ],
     "keybindings": [
@@ -73,7 +77,12 @@
         "qiniu.enable": {
           "type": "boolean",
           "default": true,
-          "description": " 上传插件开关，默认打开"
+          "description": " 插件总开关，默认打开"
+        },
+        "qiniu.uploadEnable": {
+          "type": "boolean",
+          "default": true,
+          "description": " 上传开关。如关闭则会复制图片到本机localPath。"
         },
         "qiniu.access_key": {
           "type": "string",
@@ -131,6 +140,7 @@
     "vscode-test": "^1.3.0"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "qiniu": "^7.3.0"
   }
 }

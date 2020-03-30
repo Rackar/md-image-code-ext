@@ -10,18 +10,32 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 let editor: vscode.TextEditor;
 
-const upload = (config: any, fsPath: string) => {
+const upload = (config: any, fsPath: string, escapeUpload: boolean = false) => {
   if (!fsPath) {
     return;
   }
-  // if (!window.activeTextEditor) {
-  //   return;
-  // }
-  // editor = window.activeTextEditor as vscode.TextEditor;
 
   const mdFilePath = editor.document.fileName;
   const mdFileName = path.basename(mdFilePath, path.extname(mdFilePath));
 
+  //本地拷贝
+  const uploadEnable = workspace.getConfiguration("qiniu").uploadEnable;
+  if (escapeUpload && !uploadEnable) {
+    let localPath = config["localPath"];
+    let name = path.basename(fsPath);
+    let url = path.join(localPath, path.basename(fsPath), path.extname(fsPath));
+    console.log("Upload success!");
+
+    const img = `
+![${name}](${fsPath})
+`;
+
+    editor.edit(textEditorEdit => {
+      textEditorEdit.insert(editor.selection.active, img);
+    });
+    return;
+  }
+  //云端上传
   return uploadV730(config, fsPath, mdFileName)
     .then((obj: any) => {
       let { name, url } = obj;
@@ -44,38 +58,49 @@ const error = (err: any) => {
 let sBarUpload: vscode.StatusBarItem;
 let sBarSelect: vscode.StatusBarItem;
 let sBarClip: vscode.StatusBarItem;
+let sBarSwitch: vscode.StatusBarItem;
 
 const showSBars = () => {
   sBarUpload.show();
   sBarSelect.show();
   sBarClip.show();
+  sBarSwitch.show();
 };
 
 const hideSBars = () => {
   sBarUpload.hide();
   sBarSelect.hide();
   sBarClip.hide();
+  sBarSwitch.hide();
 };
 
 const initStatusBar = (subscriptions: any, commandObj: any) => {
-  let { cmdUpload, cmdSelect, cmdCopy } = commandObj;
-
+  let { cmdUpload, cmdSelect, cmdCopy, cmdSwitch } = commandObj;
+  sBarSwitch = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 18);
   sBarUpload = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 19);
   sBarSelect = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 20);
-
   sBarClip = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 21);
+
   sBarUpload.text = "img远程";
   sBarSelect.text = "img本地";
   sBarClip.text = "img截图";
+  sBarSwitch.text = "开关";
+
   sBarUpload.tooltip = "将远程URL的图片下载到七牛云并插入本文";
   sBarSelect.tooltip = "将本机的图片上传到七牛云并插入本文";
   sBarClip.tooltip = "将剪贴板中的截图保存到本目录下并上传七牛云后，插入本文";
+  sBarSwitch.tooltip = "点击开启/关闭上传";
+
   sBarUpload.command = cmdUpload;
   sBarSelect.command = cmdSelect;
   sBarClip.command = cmdCopy;
+  sBarSwitch.command = cmdSwitch;
+
   subscriptions.push(sBarUpload);
   subscriptions.push(sBarSelect);
   subscriptions.push(sBarClip);
+  subscriptions.push(sBarSwitch);
+
   showSBars();
 };
 
@@ -112,8 +137,48 @@ export function activate(context: vscode.ExtensionContext) {
   let cmdUpload = "extension.qiniu.upload";
   let cmdSelect = "extension.qiniu.select";
   let cmdCopy = "extension.qiniu.copy";
+  let cmdSwitch = "extension.qiniu.switch";
 
-  initStatusBar(context.subscriptions, { cmdUpload, cmdSelect, cmdCopy });
+  initStatusBar(context.subscriptions, {
+    cmdUpload,
+    cmdSelect,
+    cmdCopy,
+    cmdSwitch
+  });
+
+  const switchUpload = commands.registerCommand(cmdSwitch, async () => {
+    if (!window.activeTextEditor) {
+      window.showErrorMessage("没有打开编辑窗口");
+      return;
+    }
+    editor = window.activeTextEditor as vscode.TextEditor;
+    let config = workspace.getConfiguration();
+
+    if (config.qiniu.uploadEnable) {
+      // config.uploadEnable.set = false;
+      // WorkspaceConfiguration 类型的update(section: string, value: any, configurationTarget?: ConfigurationTarget | boolean, overrideInLanguage?: boolean): Thenable<void>
+      await config.update(
+        "qiniu.uploadEnable",
+        false,
+        vscode.ConfigurationTarget.Global
+      );
+      sBarSwitch.text = "上传开关：已关";
+      window.showInformationMessage(
+        "markdown-image插件上传关闭，图片保存在本地"
+      );
+    } else {
+      await config.update(
+        "qiniu.uploadEnable",
+        true,
+        vscode.ConfigurationTarget.Global
+      );
+      sBarSwitch.text = "上传开关：已开";
+      window.showInformationMessage(
+        "markdown-image插件上传开启，图片保存在七牛云"
+      );
+    }
+    console.log(config.qiniu.uploadEnable);
+  });
 
   const inputUpload = commands.registerCommand(cmdUpload, () => {
     if (!window.activeTextEditor) {
@@ -121,6 +186,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     editor = window.activeTextEditor as vscode.TextEditor;
+    const config = workspace.getConfiguration("qiniu");
 
     window
       .showInputBox({
@@ -135,6 +201,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     editor = window.activeTextEditor as vscode.TextEditor;
+    const config = workspace.getConfiguration("qiniu");
     window
       .showOpenDialog({
         filters: { Images: ["png", "jpg", "gif", "bmp"] }
@@ -159,7 +226,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(inputUpload);
   context.subscriptions.push(selectUpload);
   context.subscriptions.push(copyclipboard);
-
+  context.subscriptions.push(switchUpload);
   // context.subscriptions.push(disposable);
   window.onDidChangeActiveTextEditor(() => {
     if (window.activeTextEditor) {
@@ -218,7 +285,7 @@ function pasteImageToQiniu() {
           return;
         }
         // window.showInformationMessage("imagePath:" + imagePath);
-        upload(config, imagePath)
+        upload(config, imagePath, true)
           .then(() => {
             // window.showInformationMessage("Upload success.");
             console.log("上传成功");
