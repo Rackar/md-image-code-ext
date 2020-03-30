@@ -4,6 +4,8 @@ Import image to Markdown file by 3 ways. Select local file, input remote Url or 
 
 本插件可以用三种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径和截图粘贴。
 
+还有一个设置图片在本机同目录下保存还是上传七牛云的开关。
+
 [七牛云图床申请方法](https://www.codingyang.com/2020/03/getQiniu.html)
 
 ## 安装配置插件
@@ -51,7 +53,7 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
 
 ## 使用方法
 
-打开 `.md` 文件后，左下角状态栏有 3 个按钮：
+打开 `.md` 文件后，左下角状态栏有 3 个按钮和一个开关。开关用于切换图片文件保存到本机路径还是上传七牛云。按钮功能如下：
 
 ![1585206266465](./images/1585206266465.png)
 

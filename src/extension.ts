@@ -23,11 +23,11 @@ const upload = (config: any, fsPath: string, escapeUpload: boolean = false) => {
   if (escapeUpload && !uploadEnable) {
     let localPath = config["localPath"];
     let name = path.basename(fsPath);
-    let url = path.join(localPath, path.basename(fsPath), path.extname(fsPath));
+    let url = path.join(localPath, path.basename(fsPath));
     console.log("Upload success!");
 
     const img = `
-![${name}](${fsPath})
+![${name}](${url})
 `;
 
     editor.edit(textEditorEdit => {
@@ -76,6 +76,7 @@ const hideSBars = () => {
 
 const initStatusBar = (subscriptions: any, commandObj: any) => {
   let { cmdUpload, cmdSelect, cmdCopy, cmdSwitch } = commandObj;
+  const config = workspace.getConfiguration("qiniu");
   sBarSwitch = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 18);
   sBarUpload = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 19);
   sBarSelect = window.createStatusBarItem(vscode.StatusBarAlignment.Left, 20);
@@ -84,7 +85,11 @@ const initStatusBar = (subscriptions: any, commandObj: any) => {
   sBarUpload.text = "img远程";
   sBarSelect.text = "img本地";
   sBarClip.text = "img截图";
-  sBarSwitch.text = "开关";
+  if (config.uploadEnable) {
+    sBarSwitch.text = "上传开关：已开";
+  } else {
+    sBarSwitch.text = "上传开关：已关";
+  }
 
   sBarUpload.tooltip = "将远程URL的图片下载到七牛云并插入本文";
   sBarSelect.tooltip = "将本机的图片上传到七牛云并插入本文";
