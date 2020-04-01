@@ -1,7 +1,5 @@
 import * as vscode from "vscode";
 import axios from "axios";
-import { resolve } from "dns";
-import { rejects } from "assert";
 const path = require("path");
 
 const fs = require("fs");

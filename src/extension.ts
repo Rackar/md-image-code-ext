@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-
 const path = require("path");
 const { window, commands, workspace } = vscode;
 const { uploadV730 } = require("./upload");
@@ -10,44 +9,76 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 let editor: vscode.TextEditor;
 
-const upload = (config: any, fsPath: string, escapeUpload: boolean = false) => {
+function insertImageTag(name: string, url: string) {
+  const img = `
+![${name}](${url})
+`;
+
+  editor.edit(textEditorEdit => {
+    textEditorEdit.insert(editor.selection.active, img);
+  });
+}
+enum cmdType {
+  local,
+  path,
+  copyclip,
+  explorer
+}
+
+const upload = (config: any, fsPath: string, type: cmdType = cmdType.local) => {
   if (!fsPath) {
     return;
+  }
+  const uploadEnable = workspace.getConfiguration("qiniu").uploadEnable;
+  //无需上传
+  if (!uploadEnable) {
+    let name = path.basename(fsPath);
+    let url = "";
+    if (type === cmdType.copyclip) {
+      let localPath = config["localPath"];
+      url = path.join(localPath, path.basename(fsPath));
+      insertImageTag(name, url);
+      return;
+    } else if (type === cmdType.explorer) {
+      let urlMd = path.dirname(editor.document.uri.fsPath);
+      let urlPic = path.normalize(fsPath);
+      url = path.relative(urlMd, urlPic);
+      url = url.replace(/\\/g, "/"); //替换反斜杠为斜杠
+      insertImageTag(name, url);
+      return;
+    }
   }
 
   const mdFilePath = editor.document.fileName;
   const mdFileName = path.basename(mdFilePath, path.extname(mdFilePath));
 
   //本地拷贝
-  const uploadEnable = workspace.getConfiguration("qiniu").uploadEnable;
-  if (escapeUpload && !uploadEnable) {
-    let localPath = config["localPath"];
-    let name = path.basename(fsPath);
-    let url = path.join(localPath, path.basename(fsPath));
-    console.log("Upload success!");
 
-    const img = `
-![${name}](${url})
-`;
+  // if (type === cmdType.copyclip && !uploadEnable) {
+  //   let localPath = config["localPath"];
+  //   let name = path.basename(fsPath);
+  //   let url = path.join(localPath, path.basename(fsPath));
+  //   insertImageTag(name, url);
+  //   return;
+  // }
 
-    editor.edit(textEditorEdit => {
-      textEditorEdit.insert(editor.selection.active, img);
-    });
-    return;
-  }
+  // if (type === cmdType.explorer && !uploadEnable) {
+  //   let name = path.basename(fsPath);
+  //   // let url = workspace.asRelativePath(fsPath);
+  //   let urlMd = path.dirname(editor.document.uri.fsPath);
+  //   let urlPic = path.normalize(fsPath);
+  //   let url = path.relative(urlMd, urlPic);
+  //   url = url.replace(/\\/g, "/"); //替换反斜杠为斜杠
+  //   insertImageTag(name, url);
+  //   return;
+  // }
   //云端上传
   return uploadV730(config, fsPath, mdFileName)
     .then((obj: any) => {
       let { name, url } = obj;
       console.log("Upload success!");
 
-      const img = `
-![${name}](${url})
-`;
-
-      editor.edit(textEditorEdit => {
-        textEditorEdit.insert(editor.selection.active, img);
-      });
+      insertImageTag(name, url);
     })
     .catch((err: any) => error(err));
 };
@@ -133,9 +164,9 @@ export function activate(context: vscode.ExtensionContext) {
   //   }
   // );
 
-  const config = workspace.getConfiguration("qiniu");
+  const configAll = workspace.getConfiguration("qiniu");
 
-  if (!config.enable) {
+  if (!configAll.enable) {
     return;
   }
 
@@ -143,6 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
   let cmdSelect = "extension.qiniu.select";
   let cmdCopy = "extension.qiniu.copy";
   let cmdSwitch = "extension.qiniu.switch";
+  let cmdAddPath = "extension.qiniu.addPath";
 
   initStatusBar(context.subscriptions, {
     cmdUpload,
@@ -228,10 +260,29 @@ export function activate(context: vscode.ExtensionContext) {
     pasteImageToQiniu();
   });
 
+  const addPath = commands.registerCommand(cmdAddPath, uri => {
+    if (!uri) {
+      vscode.window.showErrorMessage("复制路径失败，请重试。");
+
+      return;
+    }
+    // let pathUri = vscode.workspace.asRelativePath(uri);
+    let pathUri = uri.fsPath;
+    pathUri = pathUri.replace(/\\/g, "/");
+    if (!window.activeTextEditor) {
+      window.showErrorMessage("没有打开md编辑窗口");
+      return;
+    }
+    const config = workspace.getConfiguration("qiniu");
+    editor = window.activeTextEditor as vscode.TextEditor;
+    upload(config, pathUri, cmdType.explorer);
+  });
+
   context.subscriptions.push(inputUpload);
   context.subscriptions.push(selectUpload);
   context.subscriptions.push(copyclipboard);
   context.subscriptions.push(switchUpload);
+  context.subscriptions.push(addPath);
   // context.subscriptions.push(disposable);
   window.onDidChangeActiveTextEditor(() => {
     if (window.activeTextEditor) {
@@ -290,7 +341,7 @@ function pasteImageToQiniu() {
           return;
         }
         // window.showInformationMessage("imagePath:" + imagePath);
-        upload(config, imagePath, true)
+        upload(config, imagePath, cmdType.copyclip)
           .then(() => {
             // window.showInformationMessage("Upload success.");
             console.log("上传成功");

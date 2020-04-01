@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0
 - [] 提供选择复制图片到本目录还是云端目录的设置开关。
 - [] 申请七牛云免费图床的教程
 
+## [1.4.1] - 2020-04-01
+
+### Added
+
+- 增加右键上传菜单
+
+直接对图片文件右键可以选择插入到文章中。
+
 ## [1.4.0] - 2020-03-30
 
 ### Added

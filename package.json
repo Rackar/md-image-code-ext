@@ -45,11 +45,21 @@
         "title": "Image clip"
       },
       {
+        "command": "extension.qiniu.addPath",
+        "title": "将图片加入Markdown文档中"
+      },
+      {
         "command": "extension.qiniu.switch",
         "title": "Enable upload image"
       }
     ],
     "keybindings": [
+      {
+        "command": "extension.qiniu.addPath",
+        "key": "ctrl+alt+-",
+        "mac": "cmd+alt+-",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
       {
         "command": "extension.qiniu.upload",
         "key": "ctrl+alt+0",
@@ -115,6 +125,18 @@
           "description": "截图方式图片本地保存位置"
         }
       }
+    },
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "extension.qiniu.addPath"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "extension.qiniu.addPath"
+        }
+      ]
     }
   },
   "scripts": {

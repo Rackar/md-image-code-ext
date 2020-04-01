@@ -1,8 +1,8 @@
 # markdown-image README
 
-Import image to Markdown file by 3 ways. Select local file, input remote Url or local path, paste form clipbroad. It will be uploaded to Qiniu Cloud, and return image tag and url to your md file.
+Import image to Markdown file by 4 ways. Select local file, input remote Url or local path, paste form clipbroad, right click explorer menu. It will be uploaded to Qiniu Cloud, and return image tag and url to your md file.
 
-本插件可以用三种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径和截图粘贴。
+本插件可以用四种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径、截图粘贴和右键菜单。
 
 还有一个设置图片在本机同目录下保存还是上传七牛云的开关。
 
@@ -69,6 +69,10 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
 3. **img 远程** 粘贴本地图片路径或远程图片 URL 上传。快捷键：`Ctrl + Alt +0`
 
 ![path](images/path.gif)
+
+4. **右键添加** 在左侧项目资源管理器中对图片文件右键，选择“将图片加入到 Markdown 文件中”。
+
+![youjian.png](images/youjian.gif)
 
 上传成功后，插件会自动返回图片外链地址，并在光标处插入图片代码。如：
 
