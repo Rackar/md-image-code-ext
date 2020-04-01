@@ -3,12 +3,11 @@ const path = require("path");
 const url = require("url");
 import { copyFileSync } from "fs";
 import * as vscode from "vscode";
-const { window, commands, workspace } = vscode;
+const { window, workspace } = vscode;
 const {
   downloadImage,
   getImagePath,
-  createImageDirWithImagePath,
-  saveClipboardImageToFileAndGetPath
+  createImageDirWithImagePath
 } = require("./image");
 
 const PutPolicy = qiniu.rs.PutPolicy;
@@ -74,7 +73,9 @@ function saveLocalFile(file: string) {
     return;
   }
   let filePath = fileUri.fsPath;
-  let imagePath: string = getImagePath(filePath, selectText, localPath);
+
+  let rawName = path.win32.basename(file);
+  let imagePath: string = getImagePath(filePath, rawName, localPath);
   //本地复制
 
   return new Promise((resolve, reject) => {

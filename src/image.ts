@@ -7,17 +7,17 @@ const { spawn } = require("child_process");
 
 const getImagePath = function(
   filePath: string,
-  selectText: string,
+  rawFilename: string,
   localPath: string
 ) {
   // 图片名称
   let imageFileName = "";
-  if (!selectText) {
-    let now = Date.now();
+  let now = Date.now();
+  if (!rawFilename) {
     imageFileName = now + ".png";
     // imageFileName = moment().format("Y-MM-DD-HH-mm-ss") + ".png";
   } else {
-    imageFileName = selectText + ".png";
+    imageFileName = now + "-" + rawFilename;
   }
 
   // 图片本地保存路径
