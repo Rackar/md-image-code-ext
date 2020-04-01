@@ -170,7 +170,7 @@ export const uploadV730 = async (
 
             if (!err) {
               resolve({
-                name: path.win32.basename(respBody.key, param.ext),
+                name: saveFile,
                 url: resUrl
               });
             } else {
@@ -197,7 +197,7 @@ export const uploadV730 = async (
         if (respInfo.statusCode === 200) {
           console.log(respBody);
           resolve({
-            name: path.win32.basename(key, param.ext),
+            name: saveFile,
             url: url.resolve(domain, saveFile)
           });
         } else {
