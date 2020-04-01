@@ -1,11 +1,10 @@
 import * as vscode from "vscode";
 import axios from "axios";
-const path = require("path");
+import * as path from "path";
+import * as fs from "fs";
+import { spawn } from "child_process";
 
-const fs = require("fs");
-const { spawn } = require("child_process");
-
-const getImagePath = function(
+export const getImagePath = function(
   filePath: string,
   rawFilename: string,
   localPath: string
@@ -32,8 +31,8 @@ const getImagePath = function(
   return imagePath;
 };
 
-const createImageDirWithImagePath = function(imagePath: string) {
-  return new Promise((resolve, reject) => {
+export const createImageDirWithImagePath = function(imagePath: string) {
+  return new Promise<string>((resolve, reject) => {
     let imageDir = path.dirname(imagePath);
     fs.exists(imageDir, (exists: any) => {
       if (exists) {
@@ -51,7 +50,10 @@ const createImageDirWithImagePath = function(imagePath: string) {
   });
 };
 
-function saveClipboardImageToFileAndGetPath(imagePath: string, cb: Function) {
+export function saveClipboardImageToFileAndGetPath(
+  imagePath: string,
+  cb: Function
+) {
   if (!imagePath) {
     return;
   }
@@ -107,7 +109,7 @@ function saveClipboardImageToFileAndGetPath(imagePath: string, cb: Function) {
   }
 }
 
-function downloadImage(imageSrc: string, fileName: string) {
+export function downloadImage(imageSrc: string, fileName: string) {
   return new Promise((resolve, rejects) => {
     let headers = {
       "User-Agent":

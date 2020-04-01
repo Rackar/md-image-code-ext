@@ -1,16 +1,16 @@
 const qiniu = require("qiniu");
-const path = require("path");
-const url = require("url");
+
+import * as path from "path";
+import * as url from "url";
 import { copyFileSync } from "fs";
 import * as vscode from "vscode";
 const { window, workspace } = vscode;
-const {
+
+import {
   downloadImage,
   getImagePath,
   createImageDirWithImagePath
-} = require("./image");
-
-const PutPolicy = qiniu.rs.PutPolicy;
+} from "./image";
 
 // 默认参数
 const formatParam = (file: string, mdFileName: string) => {
@@ -99,7 +99,7 @@ function saveLocalFile(file: string) {
   });
 }
 
-module.exports.uploadV730 = async (
+export const uploadV730 = async (
   options: any,
   file: string,
   mdFile: string
