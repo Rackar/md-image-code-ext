@@ -55,12 +55,6 @@
     ],
     "keybindings": [
       {
-        "command": "extension.qiniu.addPath",
-        "key": "ctrl+alt+-",
-        "mac": "cmd+alt+-",
-        "when": "editorTextFocus && editorLangId == 'markdown'"
-      },
-      {
         "command": "extension.qiniu.upload",
         "key": "ctrl+alt+0",
         "mac": "cmd+alt+0",
@@ -129,12 +123,14 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.qiniu.addPath"
+          "command": "extension.qiniu.addPath",
+          "when": "resourceExtname == .png || resourceExtname == .gif || resourceExtname == .jpg || resourceExtname == .bmp || resourceExtname == .tif || resourceExtname == .svg || resourceExtname == .webp || resourceExtname == .jfif"
         }
       ],
       "editor/title/context": [
         {
-          "command": "extension.qiniu.addPath"
+          "command": "extension.qiniu.addPath",
+          "when": "resourceExtname == .png || resourceExtname == .gif || resourceExtname == .jpg || resourceExtname == .bmp || resourceExtname == .tif || resourceExtname == .svg || resourceExtname == .webp || resourceExtname == .jfif"
         }
       ]
     }
