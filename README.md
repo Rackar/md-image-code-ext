@@ -2,7 +2,7 @@
 
 Import image to Markdown file by 4 ways. Select local file, input remote Url or local path, paste form clipbroad, right click explorer menu. It will be uploaded to Qiniu Cloud, and return image tag and url to your md file.
 
-本插件可以用四种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径、截图粘贴和右键菜单。
+快速插入图片到Markdown文件，支持相对文件路径或自动传图床。本插件可以用四种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径、截图粘贴和右键菜单。
 
 还有一个设置图片在本机同目录下保存还是上传七牛云的开关。
 
