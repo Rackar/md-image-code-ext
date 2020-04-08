@@ -94,7 +94,7 @@ function saveLocalFile(file: string) {
       })
       .catch((err: any) => {
         console.error(err);
-        reject();
+        reject('拷贝图片错误，请检查。error ' + err);
       });
   });
 }
@@ -126,8 +126,6 @@ export const uploadV730 = async (
   //上传到七牛后保存的文件名
   const saveFile = formatString(remotePath + "${ext}", param);
 
-  let key = param.fileName; //仅文件名
-
   if (!uploadEnable) {
     return saveLocalFile(localFile);
   }
@@ -151,7 +149,7 @@ export const uploadV730 = async (
     //远程路径获取并上传
     return new Promise((resolve, reject) => {
       let bucketManager = new qiniu.rs.BucketManager(mac, config);
-      bucketManager.fetch(localFile, bucket, saveFile, function(
+      bucketManager.fetch(localFile, bucket, saveFile, function (
         err: any,
         respBody: any,
         respInfo: any
@@ -159,6 +157,7 @@ export const uploadV730 = async (
         if (err) {
           console.log(err);
           //throw err;
+          reject('上传失败，请检查网络连接。error: ' + err.message);
         } else {
           if (respInfo.statusCode === 200) {
             console.log(respBody.key);
@@ -167,17 +166,20 @@ export const uploadV730 = async (
             console.log(respBody.mimeType);
 
             let resUrl = url.resolve(domain, saveFile);
+            resolve({
+              name: saveFile,
+              url: resUrl
+            });
 
-            if (!err) {
-              resolve({
-                name: saveFile,
-                url: resUrl
-              });
+          } else {
+            console.log(respInfo.statusCode);
+            console.log(respBody);
+            if (respInfo.statusCode === 404) {
+              reject('图片地址找不到。error: ' + respBody.error);
             } else {
-              console.log(respInfo.statusCode);
-              console.log(respBody);
-              reject(respBody);
+              reject('上传失败，请检查七牛配置。error: ' + respBody.error);
             }
+
           }
         }
       });
@@ -186,13 +188,14 @@ export const uploadV730 = async (
     //本地上传
     return new Promise((resolve, reject) => {
       // 文件上传
-      formUploader.putFile(_uploadToken, saveFile, localFile, extra, function(
+      formUploader.putFile(_uploadToken, saveFile, localFile, extra, function (
         respErr: any,
         respBody: any,
         respInfo: any
       ) {
         if (respErr) {
-          throw respErr;
+          reject('上传失败，请检查网络连接。error: ' + respErr.message);
+          // throw respErr;
         }
         if (respInfo.statusCode === 200) {
           console.log(respBody);
@@ -203,7 +206,8 @@ export const uploadV730 = async (
         } else {
           console.log(respInfo.statusCode);
           console.log(respBody);
-          reject(respBody);
+          // throw (respBody);
+          reject('上传失败，请检查七牛配置。error: ' + respBody.error);
         }
       });
     });

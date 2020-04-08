@@ -67,8 +67,14 @@ const upload = (
       console.log("Upload success!");
 
       insertImageTag(name, url);
+    }, (err: any) => {
+      console.log(err);
+      return error(err);
     })
-    .catch((err: any) => error(err));
+    .catch((err: any) => {
+      console.log(err);
+      return error(err);
+    });
 };
 
 const error = (err: any) => {
