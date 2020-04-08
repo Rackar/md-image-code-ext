@@ -2,57 +2,15 @@
 
 Import image to Markdown file by 4 ways. Select local file, input remote Url or local path, paste form clipbroad, right click explorer menu. It will be uploaded to Qiniu Cloud, and return image tag and url to your md file.
 
-快速插入图片到Markdown文件，支持相对文件路径或自动传图床。本插件可以用四种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径、截图粘贴和右键菜单。
+快速插入图片到 Markdown 文件，支持相对文件路径或自动传图床。本插件可以用四种方式上传图片到七牛云存储，并将外链图片标签写回 md 文件。方式包括本地上传，本地/远程图片路径、截图粘贴和右键菜单。
 
-还有一个设置图片在本机同目录下保存还是上传七牛云的开关。
+还有一个设置图片在本机同目录下保存还是上传七牛云的开关。默认关闭上传，本地保存。
 
-[七牛云图床申请方法](https://www.codingyang.com/2020/03/getQiniu.html)
-
-## 安装配置插件
+## 安装插件
 
 VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安装。或者使用快捷键`Ctrl+P`，键入 `ext install markdown-image`
 
 ![](https://www.codingyang.com/assets/img/1585053722224.7c74657b.png)
-
-安装后首先配置七牛云参数，也就是上面第二篇文章中记录下来的`外链地址、AK、SK、存储名称`。
-
-点击文件 → 首选项 → 设置（快捷键 `Ctrl + Shift +P` open user settings），在用户页找到扩展 → qiniu configuration。
-
-![1585190944532](./images/1585190944532.png)
-
-这里填入各项配置：
-
-```js
-{
-    // 插件开关，默认打开
-    "qiniu.enable": true,
-
-    // 上传开关。如关闭则会复制图片到本机，位置为本项目中location。点击上传开关按钮会修改本值。
-    "qiniu.uploadEnable": true,
-
-    // 你的七牛AK: AccessKey
-    "qiniu.access_key": "*****************************************",
-
-    // 你的七牛SK: SecretKey
-    "qiniu.secret_key": "*****************************************",
-
-    // 你的七牛存储名称
-    "qiniu.bucket": "i-am-pic",
-
-    // 你的七牛外链地址。注意需要以http://作为开头。
-    "qiniu.domain": "http://xxxxx.xxxx.com",
-
-    // 远程文件命名方式。参数化命名，暂时支持 ${fileName}、${mdFileName}、${date}、${dateTime}
-    // 示例：
-    //   ${mdFileName}-${dateTime} -> markdownName-20170412222810.jpg
-    "qiniu.remotePath": "${fileName}",
-
-    // 截图方式图片本地保存路径（因为七牛的api限制，截图上传是先将黏贴板里的图片存储到本地，然后再根据这个路径上传图片
-    "qiniu.location": "./img"
-}
-```
-
-修改以后会自动保存。设置完成后就可以开始使用了。
 
 ## 使用方法
 
@@ -84,6 +42,50 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
 ```
 
 云端文件命名会根据你设置的参数化命名方式。
+
+## 配置插件自动上传七牛
+
+[七牛云图床申请方法](https://www.codingyang.com/2020/03/getQiniu.html)
+
+首先注册申请七牛云，然后配置 VS Code 参数，也就是上面文章中记录下来的 `外链地址、AK、SK、存储名称`。然后打开上传开关即可。
+
+点击文件 → 首选项 → 设置（快捷键 `Ctrl + Shift + P` open user settings），在用户页找到扩展 → qiniu configuration。
+
+![1585190944532](./images/1585190944532.png)
+
+这里填入各项配置：
+
+```js
+{
+    // 插件开关，默认打开
+    "qiniu.enable": true,
+
+    // 上传开关。如关闭则会复制图片到本机，位置为本项目中location。点击上传开关按钮会修改本值。
+    "qiniu.uploadEnable": false,
+
+    // 你的七牛AK: AccessKey
+    "qiniu.access_key": "*****************************************",
+
+    // 你的七牛SK: SecretKey
+    "qiniu.secret_key": "*****************************************",
+
+    // 你的七牛存储名称
+    "qiniu.bucket": "i-am-pic",
+
+    // 你的七牛外链地址。注意需要以http://作为开头。
+    "qiniu.domain": "http://xxxxx.xxxx.com",
+
+    // 远程文件命名方式。参数化命名，暂时支持 ${fileName}、${mdFileName}、${date}、${dateTime}
+    // 示例：
+    //   ${mdFileName}-${dateTime} -> markdownName-20170412222810.jpg
+    "qiniu.remotePath": "${fileName}",
+
+    // 图片本地保存路径（因为七牛的api限制，截图上传是先将黏贴板里的图片存储到本地，然后再根据这个路径上传图片
+    "qiniu.location": "./img"
+}
+```
+
+修改以后会自动保存。设置完成后就可以开始使用了。
 
 ## 注意事项
 

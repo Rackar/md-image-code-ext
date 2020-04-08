@@ -116,7 +116,7 @@
         "qiniu.localPath": {
           "type": "string",
           "default": "./img",
-          "description": "截图方式图片本地保存位置"
+          "description": "图片本地保存位置。截图上传也会保存一份，不需要可手动删除。"
         }
       }
     },
