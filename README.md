@@ -10,7 +10,7 @@ Import image to Markdown file by 4 ways. Select local file, input remote Url or 
 
 VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安装。或者使用快捷键`Ctrl+P`，键入 `ext install markdown-image`
 
-![](https://www.codingyang.com/assets/img/1585053722224.7c74657b.png)
+![install](https://www.codingyang.com/assets/img/1585053722224.7c74657b.png)
 
 ## 使用方法
 
@@ -21,19 +21,19 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
 1. **img 截图** 剪贴板内的截图上传。快捷键： `Ctrl + Alt +8`
    > 支持 qq，微信等工具的截图功能，会自动在本目录保存图片并上传云端。由于截图是保存在剪贴板，其他复制操作会覆盖截图。
 
-![jietu](./images/jietu.gif)
+    ![jietu](./images/jietu.gif)
 
 2. **img 本地** 直接弹框选择本机图片上传。快捷键：`Ctrl + Alt +9`
 
-![benji](images/benji.gif)
+    ![benji](images/benji.gif)
 
 3. **img 远程** 粘贴本地图片路径或远程图片 URL 上传。快捷键：`Ctrl + Alt +0`
 
-![path](images/path.gif)
+    ![path](images/path.gif)
 
 4. **右键添加** 在左侧项目资源管理器中对图片文件右键，选择“将图片加入到 Markdown 文件中”。
 
-![youjian.png](images/youjian.gif)
+    ![youjian.png](images/youjian.gif)
 
 上传成功后，插件会自动返回图片外链地址，并在光标处插入图片代码。如：
 

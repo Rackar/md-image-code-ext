@@ -85,7 +85,7 @@
         },
         "qiniu.uploadEnable": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": " 上传开关。如关闭则会复制图片到本机localPath。"
         },
         "qiniu.access_key": {
