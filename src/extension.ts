@@ -182,8 +182,9 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.ConfigurationTarget.Global
       );
       sBarSwitch.text = "上传开关：已关";
-      window.showInformationMessage(
-        "markdown-image插件上传关闭，图片保存在本地"
+      vscode.window.setStatusBarMessage(
+        "markdown-image插件上传关闭，图片将保存在本地",
+        1500
       );
     } else {
       await config.update(
@@ -192,8 +193,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.ConfigurationTarget.Global
       );
       sBarSwitch.text = "上传开关：已开";
-      window.showInformationMessage(
-        "markdown-image插件上传开启，图片保存在七牛云"
+
+      vscode.window.setStatusBarMessage(
+        "markdown-image插件上传开启，图片将保存在七牛云",
+        1500
       );
     }
     console.log(config.qiniu.uploadEnable);
@@ -391,6 +394,6 @@ function copy(url: string, name: string) {
 ![${name}](${url})
 `;
   vscode.env.clipboard.writeText(s).then(() => {
-    vscode.window.showInformationMessage("已拷贝地址到剪贴板。");
+    vscode.window.setStatusBarMessage("已拷贝地址到剪贴板。", 1500);
   });
 }

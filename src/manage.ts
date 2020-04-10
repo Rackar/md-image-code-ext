@@ -40,19 +40,7 @@ export const getQiniuImagesList = async (
 
 function doFetch(limit: number, marker: string) {
   return new Promise((resolve, reject) => {
-    const options = vscode.workspace.getConfiguration("qiniu");
-    let { access_key, secret_key, bucket } = options;
-
-    qiniu.conf.ACCESS_KEY = access_key;
-    qiniu.conf.SECRET_KEY = secret_key;
-
-    let mac = new qiniu.auth.digest.Mac(access_key, secret_key);
-
-    let config = new qiniu.conf.Config();
-    // 空间对应的机房
-    config.zone = qiniu.zone.Zone_z1;
-
-    var bucketManager = new qiniu.rs.BucketManager(mac, config);
+    let { bucketManager, bucket } = getBuckerManager();
     var _options = {
       limit: limit,
       prefix: "",
@@ -123,6 +111,8 @@ function getWebviewContent(vueSrc: vscode.Uri) {
         </div>
         
       </div>
+      <div><button @click="next()" v-show='marker!==""'>下一页</button></div>
+      
     </div>
 
     <script>
@@ -205,16 +195,12 @@ function getWebviewContent(vueSrc: vscode.Uri) {
 
     `;
 }
-
-export const deleteQiniuImage = async (
-  panel: vscode.WebviewPanel,
-  key: string
-) => {
+function getBuckerManager() {
   const options = vscode.workspace.getConfiguration("qiniu");
   let { access_key, secret_key, bucket } = options;
 
-  qiniu.conf.ACCESS_KEY = access_key;
-  qiniu.conf.SECRET_KEY = secret_key;
+  // qiniu.conf.ACCESS_KEY = access_key;
+  // qiniu.conf.SECRET_KEY = secret_key;
 
   let mac = new qiniu.auth.digest.Mac(access_key, secret_key);
 
@@ -222,7 +208,15 @@ export const deleteQiniuImage = async (
   // 空间对应的机房
   config.zone = qiniu.zone.Zone_z1;
 
-  var bucketManager = new qiniu.rs.BucketManager(mac, config);
+  let bucketManager = new qiniu.rs.BucketManager(mac, config);
+  return { bucketManager, bucket };
+}
+
+export const deleteQiniuImage = async (
+  panel: vscode.WebviewPanel,
+  key: string
+) => {
+  let { bucketManager, bucket } = getBuckerManager();
 
   bucketManager.delete(bucket, key, function (
     err: any,
@@ -236,7 +230,8 @@ export const deleteQiniuImage = async (
       console.log(respInfo.statusCode);
       console.log(respBody);
       panel.webview.postMessage({ command: "deleteFinish", name: key });
-      vscode.window.showInformationMessage("图片删除成功");
+      // vscode.window.showInformationMessage("");
+      vscode.window.setStatusBarMessage("图片删除成功", 1500);
     }
   });
 };

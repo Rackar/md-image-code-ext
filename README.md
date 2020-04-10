@@ -6,6 +6,8 @@ Import image to Markdown file by 4 ways. Select local file, input remote Url or 
 
 还有一个设置图片在本机同目录下保存还是上传七牛云的开关。默认关闭上传，本地保存。
 
+新增七牛云图床浏览和管理，快捷键`Ctrl + Alt + 7`。
+
 ## 安装插件
 
 VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安装。或者使用快捷键`Ctrl+P`，键入 `ext install markdown-image`
@@ -19,21 +21,22 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
 ![1585790341995.png](images/1585790341995.png)
 
 1. **img 截图** 剪贴板内的截图上传。快捷键： `Ctrl + Alt +8`
+
    > 支持 qq，微信等工具的截图功能，会自动在本目录保存图片并上传云端。由于截图是保存在剪贴板，其他复制操作会覆盖截图。
 
-    ![jietu](./images/jietu.gif)
+   ![jietu](./images/jietu.gif)
 
 2. **img 本地** 直接弹框选择本机图片上传。快捷键：`Ctrl + Alt +9`
 
-    ![benji](images/benji.gif)
+   ![benji](images/benji.gif)
 
 3. **img 远程** 粘贴本地图片路径或远程图片 URL 上传。快捷键：`Ctrl + Alt +0`
 
-    ![path](images/path.gif)
+   ![path](images/path.gif)
 
 4. **右键添加** 在左侧项目资源管理器中对图片文件右键，选择“将图片加入到 Markdown 文件中”。
 
-    ![youjian.png](images/youjian.gif)
+   ![youjian.png](images/youjian.gif)
 
 上传成功后，插件会自动返回图片外链地址，并在光标处插入图片代码。如：
 
@@ -93,6 +96,14 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
 2. VS Code 在预览界面默认不加载 http 请求的图片，而七牛免费云图床使用 http 协议。要按照下图点击允许请求才能正常预览外链图片。
 
 ![tu2](./images/tu2.png)
+
+## 七牛图床管理
+
+新增七牛云图床浏览和管理，快捷键`Ctrl + Alt + 7` 或者`Ctrl + Shift + p` 输入 `Manage qiniu image`。
+
+点击拉取按钮获取图片列表，可以进行删除或者复制地址。
+
+可点击下一页进行翻页。
 
 ## 源代码库
 

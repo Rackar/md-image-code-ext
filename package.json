@@ -54,7 +54,7 @@
       },
       {
         "command": "extension.qiniu.manage",
-        "title": "Manage your qiniu image"
+        "title": "Manage qiniu image"
       }
     ],
     "keybindings": [
@@ -76,6 +76,12 @@
         "key": "ctrl+alt+8",
         "mac": "cmd+alt+8",
         "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.qiniu.manage",
+        "key": "ctrl+alt+7",
+        "mac": "cmd+alt+7",
+        "when": "true"
       }
     ],
     "configuration": {
