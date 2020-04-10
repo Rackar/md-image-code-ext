@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 const { window, commands, workspace } = vscode;
 import { uploadV730 } from "./upload";
-import { getQiniuImagesList, deleteQiniuImage } from "./manage";
+import { startManger, getQiniuImagesList, deleteQiniuImage } from "./manage";
 
 import {
   getImagePath,
@@ -266,8 +266,17 @@ export function activate(context: vscode.ExtensionContext) {
       "qiniuManage", // 只供内部使用，这个webview的标识
       "七牛云存储管理", // 给用户显示的面板标题
       vscode.ViewColumn.One, // 给新的webview面板一个编辑器视图
-      { enableScripts: true } // Webview选项。我们稍后会用上
+      {
+        enableScripts: true,
+      } // Webview选项。我们稍后会用上
     );
+    // 获取磁盘上的资源路径
+    const onDiskPath = vscode.Uri.file(
+      path.join(context.extensionPath, "lib", "vue.js")
+    );
+    const scriptUri = panel.webview.asWebviewUri(onDiskPath);
+    // 获取在webview中使用的特殊URI
+
     panel.webview.onDidReceiveMessage(
       (message) => {
         switch (message.command) {
@@ -275,7 +284,14 @@ export function activate(context: vscode.ExtensionContext) {
             deleteQiniuImage(panel, message.name);
             return;
           case "pull":
+            if (message.marker === "") {
+              vscode.window.showWarningMessage("已无更多内容。");
+              return;
+            }
             getQiniuImagesList(panel, message.marker);
+            return;
+          case "init":
+            getQiniuImagesList(panel);
             return;
         }
       },
@@ -283,7 +299,7 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions
     );
 
-    getQiniuImagesList(panel);
+    startManger(panel, scriptUri);
   });
 
   context.subscriptions.push(inputUpload);

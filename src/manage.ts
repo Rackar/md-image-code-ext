@@ -2,14 +2,20 @@ const qiniu = require("qiniu");
 
 import * as vscode from "vscode";
 
+export const startManger = async (
+  panel: vscode.WebviewPanel,
+  vueSrc: vscode.Uri
+) => {
+  panel.webview.html = getWebviewContent(vueSrc);
+};
+
 export const getQiniuImagesList = async (
   panel: vscode.WebviewPanel,
-  limit = 10,
-  marker = ""
+  marker = "",
+  limit = 10
 ) => {
   const options = vscode.workspace.getConfiguration("qiniu");
   let { domain } = options;
-  panel.webview.html = getWebviewContent();
 
   // let exOBJ = {
   //   items: [{ key: "1585041424827-202032417175.png", mimeType: "image/png" }],
@@ -88,7 +94,7 @@ function doFetch(limit: number, marker: string) {
   });
 }
 
-function getWebviewContent() {
+function getWebviewContent(vueSrc: vscode.Uri) {
   return `
        <!DOCTYPE html>
 <html lang="en">
@@ -96,14 +102,14 @@ function getWebviewContent() {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Qiniu Manage</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="${vueSrc}"></script>
   </head>
   <body>
     <div id="app">
       <h3>七牛图片管理</h3>
       <div>
         <button @click="first()">拉取数据</button>
-        <button @click="next()">下一页</button>
+        <button @click="next()" v-show='marker!==""'>下一页</button>
       </div>
       <div v-for="(img,index) in urls" :key="index" style='margin:10px 5px;'>
         <img :src="img.url" style='max-width:600px; max-height:400px' />
@@ -169,7 +175,7 @@ function getWebviewContent() {
           },
           first() {
             this.vscode.postMessage({
-              command: "pull",
+              command: "init",
               marker: "",
             });
           },
