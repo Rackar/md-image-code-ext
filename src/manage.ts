@@ -111,12 +111,16 @@ function getWebviewContent(vueSrc: vscode.Uri) {
         <button @click="first()">拉取数据</button>
         <button @click="next()" v-show='marker!==""'>下一页</button>
       </div>
-      <div v-for="(img,index) in urls" :key="index" style='margin:10px 5px;'>
+      <div v-for="(img,index) in urls" :key="index" style='margin:10px 0;padding:6px 0;'>
         <img :src="img.url" style='max-width:600px; max-height:400px' />
-        <div>文件名： {{img.name}}
-        <button @click="del(index)">
-          删除
-        </button></div>
+        <div>地址： {{img.url}}
+          <button @click="copy(img.url,img.name)">
+            复制
+          </button>
+          <button @click="del(index)">
+            删除
+          </button>
+        </div>
         
       </div>
     </div>
@@ -161,6 +165,13 @@ function getWebviewContent(vueSrc: vscode.Uri) {
             this.marker=marker
 
             
+          },
+          copy(text,name){
+            this.vscode.postMessage({
+                command: "copy",
+                text: text,
+                name:name
+              });
           },
           del(i) {
             let name = this.urls[i].name;

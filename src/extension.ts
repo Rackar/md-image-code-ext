@@ -293,6 +293,9 @@ export function activate(context: vscode.ExtensionContext) {
           case "init":
             getQiniuImagesList(panel);
             return;
+          case "copy":
+            copy(message.text, message.name);
+            return;
         }
       },
       undefined,
@@ -381,4 +384,13 @@ function pasteImageToQiniu() {
       window.showErrorMessage("文件夹创建失败");
       return;
     });
+}
+
+function copy(url: string, name: string) {
+  let s = `
+![${name}](${url})
+`;
+  vscode.env.clipboard.writeText(s).then(() => {
+    vscode.window.showInformationMessage("已拷贝地址到剪贴板。");
+  });
 }
