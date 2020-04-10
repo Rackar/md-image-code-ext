@@ -51,6 +51,10 @@
       {
         "command": "extension.qiniu.switch",
         "title": "Enable upload image"
+      },
+      {
+        "command": "extension.qiniu.manage",
+        "title": "Manage your qiniu image"
       }
     ],
     "keybindings": [

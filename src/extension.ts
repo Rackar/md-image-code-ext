@@ -4,11 +4,12 @@ import * as vscode from "vscode";
 import * as path from "path";
 const { window, commands, workspace } = vscode;
 import { uploadV730 } from "./upload";
+import { getQiniuImagesList, deleteQiniuImage } from "./manage";
 
 import {
   getImagePath,
   createImageDirWithImagePath,
-  saveClipboardImageToFileAndGetPath
+  saveClipboardImageToFileAndGetPath,
 } from "./image";
 
 let editor: vscode.TextEditor;
@@ -18,7 +19,7 @@ function insertImageTag(name: string, url: string) {
 ![${name}](${url})
 `;
 
-  editor.edit(textEditorEdit => {
+  editor.edit((textEditorEdit) => {
     textEditorEdit.insert(editor.selection.active, img);
   });
 }
@@ -26,7 +27,7 @@ enum cmdType {
   local,
   path,
   copyclip,
-  explorer
+  explorer,
 }
 
 const upload = (
@@ -62,15 +63,18 @@ const upload = (
 
   //云端上传
   return uploadV730(config, fsPath, mdFileName)
-    .then((obj: any) => {
-      let { name, url } = obj;
-      console.log("Upload success!");
+    .then(
+      (obj: any) => {
+        let { name, url } = obj;
+        console.log("Upload success!");
 
-      insertImageTag(name, url);
-    }, (err: any) => {
-      console.log(err);
-      return error(err);
-    })
+        insertImageTag(name, url);
+      },
+      (err: any) => {
+        console.log(err);
+        return error(err);
+      }
+    )
     .catch((err: any) => {
       console.log(err);
       return error(err);
@@ -152,12 +156,13 @@ export function activate(context: vscode.ExtensionContext) {
   let cmdCopy = "extension.qiniu.copy";
   let cmdSwitch = "extension.qiniu.switch";
   let cmdAddPath = "extension.qiniu.addPath";
+  let cmdManageQiniu = "extension.qiniu.manage";
 
   initStatusBar(context.subscriptions, {
     cmdUpload,
     cmdSelect,
     cmdCopy,
-    cmdSwitch
+    cmdSwitch,
   });
 
   const switchUpload = commands.registerCommand(cmdSwitch, async () => {
@@ -204,9 +209,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     window
       .showInputBox({
-        placeHolder: "输入一个图片地址"
+        placeHolder: "输入一个图片地址",
       })
-      .then(fsPath => upload(config, fsPath as string), error);
+      .then((fsPath) => upload(config, fsPath as string), error);
   });
 
   const selectUpload = commands.registerCommand(cmdSelect, () => {
@@ -218,9 +223,9 @@ export function activate(context: vscode.ExtensionContext) {
     const config = workspace.getConfiguration("qiniu");
     window
       .showOpenDialog({
-        filters: { Images: ["png", "jpg", "gif", "bmp"] }
+        filters: { Images: ["png", "jpg", "gif", "bmp"] },
       })
-      .then(result => {
+      .then((result) => {
         if (result) {
           const { fsPath } = result[0];
           return upload(config, fsPath);
@@ -237,7 +242,7 @@ export function activate(context: vscode.ExtensionContext) {
     pasteImageToQiniu();
   });
 
-  const addPath = commands.registerCommand(cmdAddPath, uri => {
+  const addPath = commands.registerCommand(cmdAddPath, (uri) => {
     if (!uri) {
       vscode.window.showErrorMessage("复制路径失败，请重试。");
 
@@ -255,11 +260,38 @@ export function activate(context: vscode.ExtensionContext) {
     upload(config, pathUri, cmdType.explorer);
   });
 
+  const manageQiniu = commands.registerCommand(cmdManageQiniu, () => {
+    editor = window.activeTextEditor as vscode.TextEditor;
+    const panel = vscode.window.createWebviewPanel(
+      "qiniuManage", // 只供内部使用，这个webview的标识
+      "七牛云存储管理", // 给用户显示的面板标题
+      vscode.ViewColumn.One, // 给新的webview面板一个编辑器视图
+      { enableScripts: true } // Webview选项。我们稍后会用上
+    );
+    panel.webview.onDidReceiveMessage(
+      (message) => {
+        switch (message.command) {
+          case "delete":
+            deleteQiniuImage(panel, message.name);
+            return;
+          case "pull":
+            getQiniuImagesList(panel, message.marker);
+            return;
+        }
+      },
+      undefined,
+      context.subscriptions
+    );
+
+    getQiniuImagesList(panel);
+  });
+
   context.subscriptions.push(inputUpload);
   context.subscriptions.push(selectUpload);
   context.subscriptions.push(copyclipboard);
   context.subscriptions.push(switchUpload);
   context.subscriptions.push(addPath);
+  context.subscriptions.push(manageQiniu);
   // context.subscriptions.push(disposable);
   window.onDidChangeActiveTextEditor(() => {
     if (window.activeTextEditor) {
