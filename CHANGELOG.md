@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0
 
 - 已完成
 
+## [1.4.5] - 2020-04-10
+
+### Fixed
+
+- 增加七牛存储区域设置
+
+现在可以选择七牛空间地区，默认华北。
+
 ## [1.4.4] - 2020-04-10
 
 ### Added
