@@ -108,6 +108,11 @@
           "default": "",
           "description": "你的七牛SK: SecretKey"
         },
+        "qiniu.zone": {
+          "type": "string",
+          "default": "Zone_z1",
+          "description": "七牛地区机房代码，可选项，默认华北。华东:Zone_z0, 华北:Zone_z1, 华南:Zone_z2, 北美:Zone_na0, 东南亚:Zone_as0"
+        },
         "qiniu.bucket": {
           "type": "string",
           "default": "",

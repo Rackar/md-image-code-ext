@@ -197,7 +197,7 @@ function getWebviewContent(vueSrc: vscode.Uri) {
 }
 function getBuckerManager() {
   const options = vscode.workspace.getConfiguration("qiniu");
-  let { access_key, secret_key, bucket } = options;
+  let { access_key, secret_key, bucket, zone } = options;
 
   // qiniu.conf.ACCESS_KEY = access_key;
   // qiniu.conf.SECRET_KEY = secret_key;
@@ -206,7 +206,7 @@ function getBuckerManager() {
 
   let config = new qiniu.conf.Config();
   // 空间对应的机房
-  config.zone = qiniu.zone.Zone_z1;
+  config.zone = qiniu.zone[zone];
 
   let bucketManager = new qiniu.rs.BucketManager(mac, config);
   return { bucketManager, bucket };

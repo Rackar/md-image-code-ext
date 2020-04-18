@@ -9,7 +9,7 @@ const { window, workspace } = vscode;
 import {
   downloadImage,
   getImagePath,
-  createImageDirWithImagePath
+  createImageDirWithImagePath,
 } from "./image";
 
 // 默认参数
@@ -30,13 +30,13 @@ const formatParam = (file: string, mdFileName: string) => {
     dateTime: `${date}${h}${mm}${s}`,
     fileName: path.win32.basename(file, ext),
     ext,
-    mdFileName
+    mdFileName,
   };
 };
 
 const formatString = (tplString: string, data: any) => {
   const keys = Object.keys(data);
-  const values = keys.map(k => data[k]);
+  const values = keys.map((k) => data[k]);
 
   return new Function(keys.join(","), "return `" + tplString + "`").apply(
     null,
@@ -89,12 +89,12 @@ function saveLocalFile(file: string) {
 
         resolve({
           name: path.win32.basename(imagePath),
-          url: path.join(localPath, path.win32.basename(imagePath))
+          url: path.join(localPath, path.win32.basename(imagePath)),
         });
       })
       .catch((err: any) => {
         console.error(err);
-        reject('拷贝图片错误，请检查。error ' + err);
+        reject("拷贝图片错误，请检查。error " + err);
       });
   });
 }
@@ -110,7 +110,8 @@ export const uploadV730 = async (
     bucket,
     domain,
     remotePath,
-    uploadEnable
+    uploadEnable,
+    zone,
   } = options;
 
   let localFile = file;
@@ -135,14 +136,14 @@ export const uploadV730 = async (
 
   let mac = new qiniu.auth.digest.Mac(access_key, secret_key);
   let _options = {
-    scope: bucket
+    scope: bucket,
   };
   let _putPolicy = new qiniu.rs.PutPolicy(_options);
   let _uploadToken = _putPolicy.uploadToken(mac);
 
   let config = new qiniu.conf.Config();
   // 空间对应的机房
-  config.zone = qiniu.zone.Zone_z1;
+  config.zone = qiniu.zone[zone];
   let formUploader = new qiniu.form_up.FormUploader(config);
 
   if (localFile.indexOf("http") === 0 || localFile.indexOf("https") === 0) {
@@ -157,7 +158,7 @@ export const uploadV730 = async (
         if (err) {
           console.log(err);
           //throw err;
-          reject('上传失败，请检查网络连接。error: ' + err.message);
+          reject("上传失败，请检查网络连接。error: " + err.message);
         } else {
           if (respInfo.statusCode === 200) {
             console.log(respBody.key);
@@ -168,18 +169,16 @@ export const uploadV730 = async (
             let resUrl = url.resolve(domain, saveFile);
             resolve({
               name: saveFile,
-              url: resUrl
+              url: resUrl,
             });
-
           } else {
             console.log(respInfo.statusCode);
             console.log(respBody);
             if (respInfo.statusCode === 404) {
-              reject('图片地址找不到。error: ' + respBody.error);
+              reject("图片地址找不到。error: " + respBody.error);
             } else {
-              reject('上传失败，请检查七牛配置。error: ' + respBody.error);
+              reject("上传失败，请检查七牛配置。error: " + respBody.error);
             }
-
           }
         }
       });
@@ -194,20 +193,20 @@ export const uploadV730 = async (
         respInfo: any
       ) {
         if (respErr) {
-          reject('上传失败，请检查网络连接。error: ' + respErr.message);
+          reject("上传失败，请检查网络连接。error: " + respErr.message);
           // throw respErr;
         }
         if (respInfo.statusCode === 200) {
           console.log(respBody);
           resolve({
             name: saveFile,
-            url: url.resolve(domain, saveFile)
+            url: url.resolve(domain, saveFile),
           });
         } else {
           console.log(respInfo.statusCode);
           console.log(respBody);
           // throw (respBody);
-          reject('上传失败，请检查七牛配置。error: ' + respBody.error);
+          reject("上传失败，请检查七牛配置。error: " + respBody.error);
         }
       });
     });
