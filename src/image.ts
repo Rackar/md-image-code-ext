@@ -4,11 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { spawn } from "child_process";
 
-export const getImagePath = function (
-  filePath: string,
-  rawFilename: string,
-  localPath: string
-) {
+export const getImagePath = function (filePath: string, rawFilename: string, localPath: string) {
   // 图片名称
   let imageFileName = "";
   let now = Date.now();
@@ -50,10 +46,7 @@ export const createImageDirWithImagePath = function (imagePath: string) {
   });
 };
 
-export function saveClipboardImageToFileAndGetPath(
-  imagePath: string,
-  cb: Function
-) {
+export function saveClipboardImageToFileAndGetPath(imagePath: string, cb: Function) {
   if (!imagePath) {
     return;
   }
@@ -61,19 +54,7 @@ export function saveClipboardImageToFileAndGetPath(
   if (platform === "win32") {
     // Windows
     const scriptPath = path.join(__dirname, "../lib/pc.ps1");
-    const powershell = spawn("powershell", [
-      "-noprofile",
-      "-noninteractive",
-      "-nologo",
-      "-sta",
-      "-executionpolicy",
-      "unrestricted",
-      "-windowstyle",
-      "hidden",
-      "-file",
-      scriptPath,
-      imagePath,
-    ]);
+    const powershell = spawn("powershell", ["-noprofile", "-noninteractive", "-nologo", "-sta", "-executionpolicy", "unrestricted", "-windowstyle", "hidden", "-file", scriptPath, imagePath]);
     powershell.on("exit", function (code: any, signal: any) {});
     powershell.stdout.on("data", function (data: any) {
       // console.log(data, typeof data, data.toString("utf-8"), data.toJSON());
@@ -86,7 +67,7 @@ export function saveClipboardImageToFileAndGetPath(
     });
   } else if (platform === "darwin") {
     // Mac
-    let scriptPath = path.join(__dirname, "./lib/mac.applescript");
+    let scriptPath = path.join(__dirname, "../lib/mac.applescript");
 
     let ascript = spawn("osascript", [scriptPath, imagePath]);
     ascript.on("exit", function (code: any, signal: any) {});
@@ -97,7 +78,7 @@ export function saveClipboardImageToFileAndGetPath(
   } else {
     // Linux
 
-    let scriptPath = path.join(__dirname, "./lib/linux.sh");
+    let scriptPath = path.join(__dirname, "../lib/linux.sh");
 
     let ascript = spawn("sh", [scriptPath, imagePath]);
     ascript.on("exit", function (code: any, signal: any) {});
@@ -105,9 +86,7 @@ export function saveClipboardImageToFileAndGetPath(
     ascript.stdout.on("data", function (data: any) {
       let result = data.toString().trim();
       if (result === "no xclip") {
-        vscode.window.showInformationMessage(
-          "You need to install xclip command first."
-        );
+        vscode.window.showInformationMessage("You need to install xclip command first.");
         return;
       }
       cb(result);
@@ -118,8 +97,7 @@ export function saveClipboardImageToFileAndGetPath(
 export function downloadImage(imageSrc: string, fileName: string) {
   return new Promise((resolve, rejects) => {
     let headers = {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.19 Safari/537.36",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.19 Safari/537.36",
     };
     axios({
       method: "get",
