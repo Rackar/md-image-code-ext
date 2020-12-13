@@ -15,7 +15,7 @@
     "upload",
     "pic"
   ],
-  "icon": "images/logo.png",
+  "icon": "./images/logo.png",
   "homepage": "https://github.com/Rackar/md-image-code-ext/blob/master/README.md",
   "bugs": {
     "url": "https://github.com/Rackar/md-image-code-ext/issues"
