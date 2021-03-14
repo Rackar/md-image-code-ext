@@ -146,3 +146,16 @@ https://github.com/Rackar/md-image-code-ext
 
 发布到市场
 `vsce publish minor` 或 `vsce publish patch`
+
+### 从头编辑发布流程备忘
+
+```shell
+git clone https://github.com/Rackar/md-image-code-ext
+cd ./md-image-code-ext
+npm i
+npm i vsce typescript -g
+```
+
+然后到 https://dev.azure.com/rackar 激活 personal access key, 90 天全部权限，复制出来 token,
+
+输入`vsce publish patch`，命令行提示输入 token 时粘贴。
