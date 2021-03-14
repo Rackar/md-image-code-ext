@@ -50,6 +50,7 @@
 
 点击头像，进入 Personal access tokens, New Token, All organization, Full rights. 复制 `token`
 
+注意修改小版本号+1，同时提交所有git commit，不要存在工作区未提交的更改。
 
 更新发布  
 vsce publish patch -p `token`
