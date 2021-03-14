@@ -42,7 +42,14 @@
 
 # 发布
 
-更新发布  
-vsce publish patch -p <token>
-
 注意 token 会在 90 天过期，新建 token 时要注意选择组别，否则不能通过。
+
+[进入azure](https://aex.dev.azure.com/me?mkt=en-US)
+
+我的 https://rackar.visualstudio.com/
+
+点击头像，进入 Personal access tokens, New Token, All organization, Full rights. 复制 `token`
+
+
+更新发布  
+vsce publish patch -p `token`
