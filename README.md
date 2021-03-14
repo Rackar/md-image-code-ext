@@ -78,8 +78,8 @@ VS Code 插件中搜索 `markdown-image` 就可以找到。点击 `Install` 安�
     // 你的七牛存储名称
     "qiniu.bucket": "i-am-pic",
 
-    // 你的七牛外链地址。注意需要以http://作为开头。
-    "qiniu.domain": "http://xxxxx.xxxx.com",
+    // 你的七牛外链地址。注意需要以http://作为开头 /为结尾。
+    "qiniu.domain": "http://xxxxx.xxxx.com/",
 
     // 远程文件命名方式。参数化命名，暂时支持 ${fileName}、${mdFileName}、${date}、${dateTime}
     // 示例：

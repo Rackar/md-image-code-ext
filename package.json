@@ -125,8 +125,8 @@
         },
         "qiniu.domain": {
           "type": "string",
-          "default": "http://",
-          "description": "你的七牛外链地址。注意需要以http://作为开头"
+          "default": "http://img.xxxxxx.com/",
+          "description": "你的七牛存储外链地址。注意需要以http://作为开头,/为结尾"
         },
         "qiniu.localPath": {
           "type": "string",

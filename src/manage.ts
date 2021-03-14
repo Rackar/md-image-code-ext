@@ -17,6 +17,10 @@ export const getQiniuImagesList = async (
   const options = vscode.workspace.getConfiguration("qiniu");
   let { domain } = options;
 
+  if (domain[domain.length - 1] !== "/") {
+    domain += "/";
+  }
+
   // let exOBJ = {
   //   items: [{ key: "1585041424827-202032417175.png", mimeType: "image/png" }],
   //   marker: "eyJjIjowLCJrIjoiMTU4NTE0MzE1NjE0MC0yMDIwMzI1MjEzMjM2LnBuZyJ9",

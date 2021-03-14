@@ -43,19 +43,21 @@ const upload = (
   if (!uploadEnable) {
     let name = path.basename(fsPath);
     let url = "";
-    if (type === cmdType.copyclip) {
+    if (type === cmdType.copyclip || type === cmdType.local) {
       let localPath = config["localPath"];
       url = path.join(localPath, path.basename(fsPath));
-      insertImageTag(name, url);
-      return;
+      // insertImageTag(name, url);
+      url = './' + url.replace(/\\/g, "/"); //替换反斜杠为斜杠
     } else if (type === cmdType.explorer) {
       let urlMd = path.dirname(editor.document.uri.fsPath);
       let urlPic = path.normalize(fsPath);
       url = path.relative(urlMd, urlPic);
       url = url.replace(/\\/g, "/"); //替换反斜杠为斜杠
-      insertImageTag(name, url);
-      return;
+    } else if (type === cmdType.path) {
+      url = fsPath;
     }
+    insertImageTag(name, url);
+    return;
   }
 
   const mdFilePath = editor.document.fileName;
@@ -214,7 +216,7 @@ export function activate(context: vscode.ExtensionContext) {
       .showInputBox({
         placeHolder: "输入一个图片地址",
       })
-      .then((fsPath) => upload(config, fsPath as string), error);
+      .then((fsPath) => upload(config, fsPath as string, cmdType.path), error);
   });
 
   const selectUpload = commands.registerCommand(cmdSelect, () => {
@@ -231,7 +233,7 @@ export function activate(context: vscode.ExtensionContext) {
       .then((result) => {
         if (result) {
           const { fsPath } = result[0];
-          return upload(config, fsPath);
+          return upload(config, fsPath, cmdType.local);
         }
       }, error);
   });

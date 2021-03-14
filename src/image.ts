@@ -74,7 +74,7 @@ export function saveClipboardImageToFileAndGetPath(
       scriptPath,
       imagePath,
     ]);
-    powershell.on("exit", function (code: any, signal: any) {});
+    powershell.on("exit", function (code: any, signal: any) { });
     powershell.stdout.on("data", function (data: any) {
       // console.log(data, typeof data, data.toString("utf-8"), data.toJSON());
       let msg = data.toString().trim();
@@ -89,7 +89,7 @@ export function saveClipboardImageToFileAndGetPath(
     let scriptPath = path.join(__dirname, "./lib/mac.applescript");
 
     let ascript = spawn("osascript", [scriptPath, imagePath]);
-    ascript.on("exit", function (code: any, signal: any) {});
+    ascript.on("exit", function (code: any, signal: any) { });
 
     ascript.stdout.on("data", function (data: any) {
       cb(data.toString().trim());
@@ -100,7 +100,7 @@ export function saveClipboardImageToFileAndGetPath(
     let scriptPath = path.join(__dirname, "./lib/linux.sh");
 
     let ascript = spawn("sh", [scriptPath, imagePath]);
-    ascript.on("exit", function (code: any, signal: any) {});
+    ascript.on("exit", function (code: any, signal: any) { });
 
     ascript.stdout.on("data", function (data: any) {
       let result = data.toString().trim();
@@ -129,7 +129,7 @@ export function downloadImage(imageSrc: string, fileName: string) {
     })
       .then(function (response: any) {
         response.data.pipe(fs.createWriteStream(fileName));
-        resolve();
+        resolve(true);
       })
       .catch((err) => {
         console.error(err);
