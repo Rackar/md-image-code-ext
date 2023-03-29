@@ -132,6 +132,16 @@
           "type": "string",
           "default": "./img",
           "description": "图片本地保存位置。截图上传也会保存一份，不需要可手动删除。"
+        },
+        "qiniu.postfix": {
+          "type": "string",
+          "default": "",
+          "description": "给图片地址添加自定义后缀，比如七牛的自定义样式后缀。"
+        },
+        "qiniu.remoteDot": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否去除图片引用相对路径首位的“.”号，默认不去除"
         }
       }
     },

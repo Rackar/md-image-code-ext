@@ -42,12 +42,14 @@ const upload = (
   //无需上传
   if (!uploadEnable) {
     let name = path.basename(fsPath);
+    const postfix = workspace.getConfiguration("qiniu").postfix;
+    const removeDot = workspace.getConfiguration("qiniu").removeDot;
     let url = "";
     if (type === cmdType.copyclip || type === cmdType.local) {
       let localPath = config["localPath"];
       url = path.join(localPath, path.basename(fsPath));
       // insertImageTag(name, url);
-      url = './' + url.replace(/\\/g, "/"); //替换反斜杠为斜杠
+      url = removeDot ? "/" : "./" + url.replace(/\\/g, "/"); //替换反斜杠为斜杠
     } else if (type === cmdType.explorer) {
       let urlMd = path.dirname(editor.document.uri.fsPath);
       let urlPic = path.normalize(fsPath);
@@ -56,6 +58,7 @@ const upload = (
     } else if (type === cmdType.path) {
       url = fsPath;
     }
+    url += postfix;
     insertImageTag(name, url);
     return;
   }
