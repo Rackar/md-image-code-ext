@@ -138,10 +138,10 @@
           "default": "",
           "description": "给图片地址添加自定义后缀，比如七牛的自定义样式后缀。"
         },
-        "qiniu.remoteDot": {
+        "qiniu.removeDot": {
           "type": "boolean",
           "default": false,
-          "description": "是否去除图片引用相对路径首位的“.”号，默认不去除"
+          "description": "是否去除图片引用相对路径首位的“.”号，打勾为去除。"
         }
       }
     },

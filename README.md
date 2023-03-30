@@ -145,7 +145,8 @@ https://github.com/Rackar/md-image-code-ext
 `vsce package`
 
 发布到市场
-`vsce publish minor` 或 `vsce publish patch`
+`vsce publish minor` # 中版本
+`vsce publish patch` # 小版本
 
 ### 从头编辑发布流程备忘
 
